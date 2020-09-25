@@ -3,6 +3,8 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <allegro5/allegro_native_dialog.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 
 //fps = frames per second = atualizacoes de tela por segundo
 #define FPS 60.0
@@ -14,6 +16,7 @@ ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
 ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_BITMAP* quadrado = NULL;
+ALLEGRO_AUDIO_STREAM* musica = NULL;
 
 void error_msg(char* text) {
     al_show_native_message_box(janela, "ERRO",
@@ -33,6 +36,38 @@ int inicializar() {
         error_msg("Falha ao criar temporizador");
         return 0;
     }
+
+    //inicialização do add-on de audio
+    if (!al_install_audio()) {
+        error_msg("Falha ao inicializar o audio");
+        return 0;
+    }
+
+    //addon que da suporte as extensoes de audio
+    if (!al_init_acodec_addon()) {
+        error_msg("Falha ao inicializar o codec de audio");
+        return 0;
+    }
+
+    //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
+    if (!al_reserve_samples(2)) {
+        error_msg("Falha ao reservar amostrar de audio");
+        return 0;
+    }
+
+    //carrega o stream
+    musica = al_load_audio_stream("victory.mp3", 4, 1024);
+    if (!musica)
+    {
+        error_msg("Audio nao carregado");
+        return 0;
+    }
+
+    //liga o stream no mixer
+    al_attach_audio_stream_to_mixer(musica, al_get_default_mixer());
+
+    //define que o stream vai tocar no modo repeat
+    al_set_audio_stream_playmode(musica, ALLEGRO_PLAYMODE_LOOP);
 
     // Inicialização do add-on para uso de fontes
     al_init_font_addon();
@@ -88,6 +123,8 @@ int inicializar() {
         al_destroy_timer(timer);
         al_destroy_display(janela);
         al_destroy_bitmap(quadrado);
+        al_destroy_audio_stream(musica);
+
         return 0;
     }
 
