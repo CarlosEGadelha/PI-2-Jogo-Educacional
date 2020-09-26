@@ -197,16 +197,28 @@ int main(void) {
             al_clear_to_color(al_map_rgb(255, 255, 255));
             switch (tecla) {
             case 1:
-                posy -= direcao;
+                if (posy >= 10) {
+                    posy -= direcao;
+                    break;
+                }
                 break;
             case 2:
-                posy += direcao;
+                if (posy <= ALTURA_TELA-60) {
+                    posy += direcao;
+                    break;
+                }
                 break;
             case 3:
-                posx -= direcao;
+                if (posx >= 10) {
+                    posx -= direcao;
+                    break;
+                }
                 break;
             case 4:
-                posx += direcao;
+                if (posx <= LARGURA_TELA-60) {
+                    posx += direcao;
+                    break;
+                }
                 break;
             }
             desenha = 1;

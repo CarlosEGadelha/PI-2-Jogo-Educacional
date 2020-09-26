@@ -1,4 +1,3 @@
 ﻿  Jogo.c
-C:\Users\Rafael Ribas\PI-2\Jogo\Jogo.c(81,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-  LINK : C:\Users\Rafael Ribas\PI-2\Debug\Jogo.exe não encontrado ou não compilado pelo o último link incremental; executando link completo
-  Jogo.vcxproj -> C:\Users\Rafael Ribas\PI-2\Debug\Jogo.exe
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(81,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+  Jogo.vcxproj -> C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Debug\Jogo.exe
