@@ -8,14 +8,18 @@
 
 //fps = frames per second = atualizacoes de tela por segundo
 #define FPS 60.0
-#define LARGURA_TELA 640
-#define ALTURA_TELA 480
+#define LARGURA_TELA 800
+#define ALTURA_TELA 380
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
 ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
-ALLEGRO_BITMAP* quadrado = NULL;
+ALLEGRO_BITMAP* direita = NULL;
+ALLEGRO_BITMAP* esquerda = NULL;
+ALLEGRO_BITMAP* cima = NULL;
+ALLEGRO_BITMAP* baixo = NULL;
+ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 
 void error_msg(char* text) {
@@ -105,15 +109,65 @@ int inicializar() {
         return 0;
     }
 
-    quadrado = al_create_bitmap(50, 50);
-    if (!quadrado) {
-        error_msg("Falha ao criar bitmap");
+    //Inicia a imagem para a movimentação do personagem para a Direita
+    direita = al_load_bitmap("movimento_direita.bmp");
+    if (!direita) {
+        error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
         al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(direita, al_map_rgb(255, 0, 255));
+
+    //Inicia a imagem para a movimentação do personagem para a Esquerda
+    esquerda = al_load_bitmap("movimento_esquerda.bmp");
+    if (!esquerda) {
+        error_msg("Falha ao carregar sprites");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(esquerda, al_map_rgb(255, 0, 255));
+
+    //Inicia a imagem para a movimentação do personagem para a Cima
+    cima = al_load_bitmap("movimento_cima.bmp");
+    if (!cima) {
+        error_msg("Falha ao carregar sprites");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(cima, al_map_rgb(255, 0, 255));
+
+    //Inicia a imagem para a movimentação do personagem para a Baixo
+    baixo = al_load_bitmap("movimento_baixo.bmp");
+    if (!baixo) {
+        error_msg("Falha ao carregar sprites");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(baixo, al_map_rgb(255, 0, 255));
+
+    //Inicia a imagem de fundo
+    fundo = al_load_bitmap("background.png");
+    if (!fundo) {
+        error_msg("Falha ao carregar fundo");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        al_destroy_bitmap(direita);
+        al_destroy_bitmap(esquerda);
+        al_destroy_bitmap(cima);
+        al_destroy_bitmap(baixo);
         return 0;
     }
 
-    al_set_target_bitmap(quadrado);
+    //al_set_target_bitmap(quadrado);
     al_clear_to_color(al_map_rgb(255, 0, 0));
     al_set_target_bitmap(al_get_backbuffer(janela));
 
@@ -122,7 +176,7 @@ int inicializar() {
         error_msg("Falha ao criar fila de eventos");
         al_destroy_timer(timer);
         al_destroy_display(janela);
-        al_destroy_bitmap(quadrado);
+        //al_destroy_bitmap(quadrado);
         al_destroy_audio_stream(musica);
 
         return 0;
@@ -133,15 +187,7 @@ int inicializar() {
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
-    quadrado = al_create_bitmap(50, 50);
-    if (!quadrado) {
-        error_msg("Falha ao criar bitmap");
-        al_destroy_timer(timer);
-        al_destroy_display(janela);
-        return 0;
-    }
-
-    al_set_target_bitmap(quadrado);
+    //al_set_target_bitmap(quadrado);
     al_clear_to_color(al_map_rgb(255, 0, 0));
     al_set_target_bitmap(al_get_backbuffer(janela));
     fila_eventos, al_get_timer_event_source(timer);
@@ -159,8 +205,18 @@ int main(void) {
     //quando o loop principal deve encerrar
     int sair = 0;
     //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    int posx = 200;
-    int posy = 200, direcao = 5;
+    int posx = 0;
+    int posy = 120, direcao = 3;
+    //largura e altura de cada sprite dentro da folha
+    int altura_sprite = 170, largura_sprite = 160;
+    //quantos sprites tem em cada linha da folha, e a atualmente mostrada
+    int colunas_folha = 3, coluna_atual = 0;
+    //quantos sprites tem em cada coluna da folha, e a atualmente mostrada
+    int linha_atual = 0, linhas_folha = 2;
+    //quantos frames devem se passar para atualizar para o proximo sprite
+    int frames_sprite = 6, cont_frames = 0;
+    //posicao X Y da janela em que sera mostrado o sprite
+    int regiao_x_folha = 0, regiao_y_folha = 0;
 
     if (!inicializar()) {
         return -1;
@@ -192,6 +248,7 @@ int main(void) {
         else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
             sair = 1;
         }
+
         // Estrutura que realiza a movimentação do Personagem
         if (tecla) {
             al_clear_to_color(al_map_rgb(255, 255, 255));
@@ -203,19 +260,19 @@ int main(void) {
                 }
                 break;
             case 2:
-                if (posy <= ALTURA_TELA-60) {
+                if (posy <= ALTURA_TELA-180) {
                     posy += direcao;
                     break;
                 }
                 break;
             case 3:
-                if (posx >= 10) {
+                if (posx >= 0) {
                     posx -= direcao;
                     break;
                 }
                 break;
             case 4:
-                if (posx <= LARGURA_TELA-60) {
+                if (posx <= LARGURA_TELA-160) {
                     posx += direcao;
                     break;
                 }
@@ -224,17 +281,65 @@ int main(void) {
             desenha = 1;
         }
 
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
+            //a cada disparo do timer, incrementa cont_frames
+            cont_frames++;
+            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
+            if (cont_frames >= frames_sprite) {
+                //reseta cont_frames
+                cont_frames = 0;
+                //incrementa a coluna atual, para mostrar o proximo sprite
+                coluna_atual++;
+                //se coluna atual passou da ultima coluna
+                if (coluna_atual >= colunas_folha) {
+                    //volta pra coluna inicial
+                    coluna_atual = 0;
+                    //incrementa a linha, se passar da ultima, volta pra primeira
+                    linha_atual = (linha_atual + 1) % linhas_folha;
+                    //calcula a posicao Y da folha que sera mostrada
+                    regiao_y_folha = linha_atual * altura_sprite;
+                }
+                //calcula a regiao X da folha que sera mostrada
+                regiao_x_folha = coluna_atual * largura_sprite;
+            }
+        }
+
         //Desenha a nova posição do Personagem na tela
         if (desenha && al_is_event_queue_empty(fila_eventos)) {
 
-            al_clear_to_color(al_map_rgb(0, 0, 0));
-            al_draw_bitmap(quadrado, posx, posy, 0);
+            al_draw_bitmap_region(fundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+
+            if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 4) {
+                al_draw_bitmap_region(direita, regiao_x_folha,
+                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+            }
+            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 3) {
+                al_draw_bitmap_region(esquerda, regiao_x_folha,
+                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+            }
+            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 2) {
+                al_draw_bitmap_region(baixo, regiao_x_folha,
+                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+            }
+            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 1) {
+                al_draw_bitmap_region(cima, regiao_x_folha,
+                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+            }
+            else {
+                al_draw_bitmap_region(baixo, regiao_x_folha,
+                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+            }
+
             al_flip_display();
             desenha = 0;
         }
     }
 
-    al_destroy_bitmap(quadrado);
+    al_destroy_bitmap(direita);
+    al_destroy_bitmap(esquerda);
+    al_destroy_bitmap(baixo);
+    al_destroy_bitmap(cima);
+    al_destroy_bitmap(fundo);
     al_destroy_timer(timer);
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
