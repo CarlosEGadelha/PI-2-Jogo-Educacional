@@ -254,25 +254,29 @@ int main(void) {
             al_clear_to_color(al_map_rgb(255, 255, 255));
             switch (tecla) {
             case 1:
-                if (posy >= 10) {
+                //colisão de cima
+                if (posy >= 5) {
                     posy -= direcao;
                     break;
                 }
                 break;
             case 2:
+                //colisão de baixo
                 if (posy <= ALTURA_TELA-180) {
                     posy += direcao;
                     break;
                 }
                 break;
             case 3:
-                if (posx >= 0) {
+                //colisão da esquerda
+                if (posx >= 70) {
                     posx -= direcao;
                     break;
                 }
                 break;
             case 4:
-                if (posx <= LARGURA_TELA-160) {
+                //colisão da direita
+                if (posx <= LARGURA_TELA-130) {
                     posx += direcao;
                     break;
                 }
