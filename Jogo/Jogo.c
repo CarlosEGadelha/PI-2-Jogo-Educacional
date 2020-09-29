@@ -9,7 +9,7 @@
 //fps = frames per second = atualizacoes de tela por segundo
 #define FPS 60.0
 #define LARGURA_TELA 800
-#define ALTURA_TELA 380
+#define ALTURA_TELA 600
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -154,7 +154,7 @@ int inicializar() {
     al_convert_mask_to_alpha(baixo, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem de fundo
-    fundo = al_load_bitmap("background.png");
+    fundo = al_load_bitmap("mapa_base_montanha.bmp");
     if (!fundo) {
         error_msg("Falha ao carregar fundo");
         al_destroy_timer(timer);
@@ -205,8 +205,8 @@ int main(void) {
     //quando o loop principal deve encerrar
     int sair = 0;
     //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    int posx = 0;
-    int posy = 120, direcao = 3;
+    int posx = 300;
+    int posy = 400, direcao = 3;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
     //quantos sprites tem em cada linha da folha, e a atualmente mostrada
