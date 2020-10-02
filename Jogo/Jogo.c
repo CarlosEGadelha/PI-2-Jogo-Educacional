@@ -110,7 +110,7 @@ int inicializar() {
     }
 
     //Inicia a imagem para a movimentação do personagem para a Direita
-    direita = al_load_bitmap("movimento_direita.bmp");
+    direita = al_load_bitmap("sprites/movimento_direita.bmp");
     if (!direita) {
         error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
@@ -121,7 +121,7 @@ int inicializar() {
     al_convert_mask_to_alpha(direita, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem para a movimentação do personagem para a Esquerda
-    esquerda = al_load_bitmap("movimento_esquerda.bmp");
+    esquerda = al_load_bitmap("sprites/movimento_esquerda.bmp");
     if (!esquerda) {
         error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
@@ -132,7 +132,7 @@ int inicializar() {
     al_convert_mask_to_alpha(esquerda, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem para a movimentação do personagem para a Cima
-    cima = al_load_bitmap("movimento_cima.bmp");
+    cima = al_load_bitmap("sprites/movimento_cima.bmp");
     if (!cima) {
         error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
@@ -143,7 +143,7 @@ int inicializar() {
     al_convert_mask_to_alpha(cima, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem para a movimentação do personagem para a Baixo
-    baixo = al_load_bitmap("movimento_baixo.bmp");
+    baixo = al_load_bitmap("sprites/movimento_baixo.bmp");
     if (!baixo) {
         error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
@@ -154,7 +154,7 @@ int inicializar() {
     al_convert_mask_to_alpha(baixo, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem de fundo
-    fundo = al_load_bitmap("mapa_base_montanha.bmp");
+    fundo = al_load_bitmap("cenario/mapa_base_montanha.bmp");
     if (!fundo) {
         error_msg("Falha ao carregar fundo");
         al_destroy_timer(timer);
