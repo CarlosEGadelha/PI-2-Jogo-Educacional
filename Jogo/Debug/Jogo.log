@@ -1,3 +1,3 @@
 ﻿  Jogo.c
-C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(85,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-  Jogo.vcxproj -> C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Debug\Jogo.exe
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(90,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+  Jogo.vcxproj -> C:\Users\andre\Desktop\PI-2\Debug\Jogo.exe

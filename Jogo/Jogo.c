@@ -21,6 +21,11 @@ ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
+ALLEGRO_BITMAP* imagem = NULL;
+ALLEGRO_BITMAP* botao_sair = NULL;
+ALLEGRO_BITMAP* jogar = 0;
+ALLEGRO_BITMAP* instrucoes = 0;
+ALLEGRO_BITMAP* desenvolvedores = 0;
 
 void error_msg(char* text) {
     al_show_native_message_box(janela, "ERRO",
@@ -104,8 +109,8 @@ int inicializar() {
 
     fonte = al_load_font("arial.ttf", 48, 0);
     if (!fonte) {
-        error_msg("Falha ao carregar \"arial.ttf\"");
         al_destroy_display(janela);
+        error_msg("Falha ao carregar fonte");
         return 0;
     }
 
@@ -183,6 +188,7 @@ int inicializar() {
     }
 
     //registra duas fontes de eventos na fila. o da janela, e do teclado
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
@@ -198,7 +204,9 @@ int inicializar() {
     return 1;
 }
 
-int main(void) {
+
+int jogo(void) {
+    al_destroy_display(janela);
     int tecla = 0;
     //define quando a tela sera atualizada
     int desenha = 1;
@@ -262,7 +270,7 @@ int main(void) {
                 break;
             case 2:
                 //colisão de baixo
-                if (posy <= ALTURA_TELA-180) {
+                if (posy <= ALTURA_TELA - 180) {
                     posy += direcao;
                     break;
                 }
@@ -276,7 +284,7 @@ int main(void) {
                 break;
             case 4:
                 //colisão da direita
-                if (posx <= LARGURA_TELA-130) {
+                if (posx <= LARGURA_TELA - 130) {
                     posx += direcao;
                     break;
                 }
@@ -348,5 +356,201 @@ int main(void) {
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
 
+    return 0;
+}
+
+int menu() {
+    if (!al_init()) {
+        error_msg("Falha ao inicializar a Allegro");
+        return -1;
+    }
+
+    al_init_font_addon();
+
+    if (!al_init_image_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_image");
+        return -1;
+    }
+
+    if (!al_init_ttf_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_ttf");
+        return -1;
+    }
+
+    fonte = al_load_font("arial.ttf", 48, 0);
+    if (!fonte) {
+        al_destroy_display(janela);
+        error_msg("Falha ao carregar fonte");
+        return -1;
+    }
+
+    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    if (!janela) {
+        error_msg("Falha ao criar janela");
+        return -1;
+    }
+    al_set_window_title(janela, "Menu");
+
+    imagem = al_load_bitmap("Cenario/Menu.bmp");
+    if (!imagem) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!al_install_mouse()) {
+        error_msg("Falha ao inicializar o mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
+        error_msg("Falha ao atribuir ponteiro do mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    jogar = al_create_bitmap(200, 50);
+    if (!jogar) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    instrucoes = al_create_bitmap(200, 50);
+    if (!instrucoes) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    desenvolvedores = al_create_bitmap(200, 50);
+    if (!desenvolvedores) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    botao_sair = al_create_bitmap(200, 50);
+    if (!botao_sair) {
+        error_msg("Falha ao criar botão de saída");
+        al_destroy_bitmap(jogar);
+        al_destroy_bitmap(instrucoes);
+        al_destroy_bitmap(desenvolvedores);
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    fila_eventos = al_create_event_queue();
+    if (!fila_eventos) {
+        error_msg("Falha ao criar fila de eventos");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
+    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+
+    int sair = 0;
+    int menuJogar = 0;
+    int menuInstrucoes = 0;
+    int menuDesenvolvedores = 0;
+
+    while (!sair) {
+        al_draw_bitmap(imagem, 0, 0, 0);
+        while (!al_is_event_queue_empty(fila_eventos)) {
+            ALLEGRO_EVENT evento;
+            al_wait_for_event(fila_eventos, &evento);
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 150 &&
+                    evento.mouse.y <= 200) {
+                    menuJogar = 1;
+                    sair = 1;
+                    jogo();
+                }
+                else {
+                    menuJogar = 0;
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 230 &&
+                    evento.mouse.y <= 280) {
+                    menuInstrucoes = 1;
+                }
+                else {
+                    menuInstrucoes = 0;
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 310 &&
+                    evento.mouse.y <= 360) {
+                    menuDesenvolvedores = 1;
+                }
+                else {
+                    menuDesenvolvedores = 0;
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 390 &&
+                    evento.mouse.y <= 440) {
+                    sair = 1;
+                }
+            }
+        }
+
+        al_set_target_bitmap(jogar);
+        if (!menuJogar) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(0, 255, 0));
+        }
+
+        al_set_target_bitmap(instrucoes);
+        if (!menuInstrucoes) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(0, 0, 255));
+        }
+
+        al_set_target_bitmap(desenvolvedores);
+        if (!menuDesenvolvedores) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(botao_sair);
+        al_clear_to_color(al_map_rgb(255, 0, 0));
+
+        al_set_target_bitmap(al_get_backbuffer(janela));
+        al_draw_bitmap(jogar, 300, 150, 0);
+        al_draw_bitmap(instrucoes, 300, 230, 0);
+        al_draw_bitmap(desenvolvedores, 300, 310, 0);
+        al_draw_bitmap(botao_sair, 300, 390, 0);
+
+        al_flip_display();
+    }
+
+    al_destroy_bitmap(botao_sair);
+    al_destroy_bitmap(jogar);
+    al_destroy_bitmap(instrucoes);
+    al_destroy_bitmap(desenvolvedores);
+    al_destroy_display(janela);
+    al_destroy_event_queue(fila_eventos);
+
+    return 0;
+}
+
+int main(void) {
+    //jogo();
+    menu();
     return 0;
 }
