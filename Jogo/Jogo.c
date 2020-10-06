@@ -428,7 +428,7 @@ int menu() {
         return 0;
     }
 
-    instrucoes = al_load_bitmap("sprites/botao_credito.bmp");
+    instrucoes = al_load_bitmap("sprites/botao_tutorial.bmp");
     if (!instrucoes) {
         error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
@@ -536,7 +536,6 @@ int menu() {
 }
 
 int main(void) {
-    //jogo();
     menu();
     return 0;
 }
