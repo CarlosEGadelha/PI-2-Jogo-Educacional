@@ -19,6 +19,7 @@ ALLEGRO_BITMAP* direita = NULL;
 ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
+ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -157,6 +158,16 @@ int inicializar() {
         return 0;
     }
     al_convert_mask_to_alpha(baixo, al_map_rgb(255, 0, 255));
+
+    parado = al_load_bitmap("sprites/Calculito_parado.bmp");
+    if (!parado) {
+        error_msg("Falha ao carregar sprites");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(parado, al_map_rgb(255, 0, 255));
 
     //Inicia a imagem de fundo
     fundo = al_load_bitmap("cenario/mapa_base_montanha.bmp");
@@ -338,7 +349,7 @@ int jogo(void) {
                     regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
             }
             else {
-                al_draw_bitmap_region(baixo, regiao_x_folha,
+                al_draw_bitmap_region(parado, regiao_x_folha,
                     regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
             }
 
@@ -410,42 +421,42 @@ int menu() {
         return -1;
     }
 
-    jogar = al_create_bitmap(200, 50);
+    jogar = al_load_bitmap("sprites/botao_jogar.bmp");
     if (!jogar) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    instrucoes = al_create_bitmap(200, 50);
+    instrucoes = al_load_bitmap("sprites/botao_credito.bmp");
     if (!instrucoes) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    desenvolvedores = al_create_bitmap(200, 50);
+    desenvolvedores = al_load_bitmap("sprites/botao_credito.bmp");
     if (!desenvolvedores) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    botao_sair = al_create_bitmap(200, 50);
+    botao_sair = al_load_bitmap("sprites/botao_quit.bmp");
     if (!botao_sair) {
         error_msg("Falha ao criar botão de saída");
         al_destroy_bitmap(jogar);
         al_destroy_bitmap(instrucoes);
         al_destroy_bitmap(desenvolvedores);
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     fila_eventos = al_create_event_queue();
     if (!fila_eventos) {
         error_msg("Falha ao criar fila de eventos");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
@@ -503,32 +514,7 @@ int menu() {
             }
         }
 
-        al_set_target_bitmap(jogar);
-        if (!menuJogar) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 255, 0));
-        }
-
-        al_set_target_bitmap(instrucoes);
-        if (!menuInstrucoes) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 0, 255));
-        }
-
-        al_set_target_bitmap(desenvolvedores);
-        if (!menuDesenvolvedores) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
         al_set_target_bitmap(botao_sair);
-        al_clear_to_color(al_map_rgb(255, 0, 0));
 
         al_set_target_bitmap(al_get_backbuffer(janela));
         al_draw_bitmap(jogar, 300, 150, 0);
