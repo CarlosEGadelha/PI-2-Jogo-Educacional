@@ -15,6 +15,7 @@ ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
 ALLEGRO_FONT* fonte = NULL;
 ALLEGRO_TIMER* timer = NULL;
+ALLEGRO_BITMAP* quadrado = NULL;
 ALLEGRO_BITMAP* direita = NULL;
 ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
@@ -93,6 +94,8 @@ int inicializar() {
         return 0;
     }
 
+
+
     //inicializa addon do teclado
     if (!al_install_keyboard()) {
         error_msg("Falha ao inicializar o teclado");
@@ -114,6 +117,17 @@ int inicializar() {
         error_msg("Falha ao carregar fonte");
         return 0;
     }
+
+    //Inicia a imagem do inimigo
+    quadrado = al_create_bitmap(50, 50);
+    if (!quadrado) {
+        error_msg("Falha ao criar inimigo");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        return 0;
+    }
+    al_set_target_bitmap(quadrado);
+
 
     //Inicia a imagem para a movimentação do personagem para a Direita
     direita = al_load_bitmap("sprites/movimento_direita.bmp");
@@ -183,16 +197,12 @@ int inicializar() {
         return 0;
     }
 
-    //al_set_target_bitmap(quadrado);
-    al_clear_to_color(al_map_rgb(255, 0, 0));
-    al_set_target_bitmap(al_get_backbuffer(janela));
-
     fila_eventos = al_create_event_queue();
     if (!fila_eventos) {
         error_msg("Falha ao criar fila de eventos");
         al_destroy_timer(timer);
         al_destroy_display(janela);
-        //al_destroy_bitmap(quadrado);
+        al_destroy_bitmap(quadrado);
         al_destroy_audio_stream(musica);
 
         return 0;
@@ -204,7 +214,6 @@ int inicializar() {
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
-    //al_set_target_bitmap(quadrado);
     al_clear_to_color(al_map_rgb(255, 0, 0));
     al_set_target_bitmap(al_get_backbuffer(janela));
     fila_eventos, al_get_timer_event_source(timer);
@@ -215,7 +224,6 @@ int inicializar() {
     return 1;
 }
 
-
 int jogo(void) {
     al_destroy_display(janela);
     int tecla = 0;
@@ -224,8 +232,9 @@ int jogo(void) {
     //quando o loop principal deve encerrar
     int sair = 0;
     //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    int posx = 300;
-    int posy = 400, direcao = 3;
+    int posx = 300, posxI= 700;
+    int posy = 400, posyI = 500;
+    int direcao = 3, direcaoI = 3;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
     //quantos sprites tem em cada linha da folha, e a atualmente mostrada
@@ -242,9 +251,21 @@ int jogo(void) {
     }
 
     while (!sair) {
+        // Pegar as teclas digitadas
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
-        // Pegar as teclas digitadas
+
+        //Loop de movimentacao do inimigo
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
+
+            posyI += direcaoI;
+            //se passou das bordas, inverte a direcao
+            if (posyI <= 490 || posyI >= 600)
+                direcaoI *= -1; 
+           
+            desenha = 1;
+        }
+
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
             switch (evento.keyboard.keycode) {
             case ALLEGRO_KEY_UP:
@@ -307,6 +328,7 @@ int jogo(void) {
         if (evento.type == ALLEGRO_EVENT_TIMER) {
             //a cada disparo do timer, incrementa cont_frames
             cont_frames++;
+
             //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
             if (cont_frames >= frames_sprite) {
                 //reseta cont_frames
@@ -326,6 +348,7 @@ int jogo(void) {
                 regiao_x_folha = coluna_atual * largura_sprite;
             }
         }
+
 
         //Desenha a nova posição do Personagem na tela
         if (desenha && al_is_event_queue_empty(fila_eventos)) {
@@ -353,6 +376,9 @@ int jogo(void) {
                     regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
             }
 
+            //desenha o quadrado na tela nas posicoes X e Y
+            al_draw_bitmap(quadrado, posxI, posyI, 0);
+            
             al_flip_display();
             desenha = 0;
         }
@@ -363,6 +389,7 @@ int jogo(void) {
     al_destroy_bitmap(baixo);
     al_destroy_bitmap(cima);
     al_destroy_bitmap(fundo);
+    al_destroy_bitmap(quadrado);
     al_destroy_timer(timer);
     al_destroy_display(janela);
     al_destroy_event_queue(fila_eventos);
