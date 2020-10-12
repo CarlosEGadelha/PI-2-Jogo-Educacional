@@ -1,3 +1,6 @@
 ﻿  Jogo.c
-C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(92,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-  Jogo.vcxproj -> C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Debug\Jogo.exe
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(95,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(434,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(490,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(547,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+  Jogo.vcxproj -> C:\Users\andre\Desktop\PI-2\Debug\Jogo.exe
