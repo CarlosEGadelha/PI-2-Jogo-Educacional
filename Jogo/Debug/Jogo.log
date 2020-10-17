@@ -1,6 +1,18 @@
 ﻿  Jogo.c
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(95,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(434,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(490,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(547,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(98,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(259,39): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(266,37): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(273,38): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(354,36): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(362,34): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(370,35): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(379,30): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(380,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(381,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(387,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(388,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(389,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(598,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(655,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
+C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(711,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
   Jogo.vcxproj -> C:\Users\andre\Desktop\PI-2\Debug\Jogo.exe
