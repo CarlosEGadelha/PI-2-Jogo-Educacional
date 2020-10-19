@@ -25,6 +25,7 @@ ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* parado = NULL;
+ALLEGRO_BITMAP* inimigo_baixo = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -134,6 +135,16 @@ int inicializar() {
     }
     al_set_target_bitmap(quadrado);
 
+    inimigo_baixo = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
+    if (!inimigo_baixo) {
+        error_msg("Falha ao carregar sprites");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(inimigo_baixo, al_map_rgb(255, 0, 255));
+
 
     //Inicia a imagem para a movimentação do personagem para a Direita
     direita = al_load_bitmap("sprites/movimento_direita.bmp");
@@ -200,6 +211,7 @@ int inicializar() {
         al_destroy_bitmap(esquerda);
         al_destroy_bitmap(cima);
         al_destroy_bitmap(baixo);
+        al_destroy_bitmap(inimigo_baixo);
         return 0;
     }
 
@@ -413,6 +425,8 @@ int jogo(void) {
     int frames_sprite = 6, cont_frames = 0;
     //posicao X Y da janela em que sera mostrado o sprite
     int regiao_x_folha = 0, regiao_y_folha = 0;
+    //sprites do inimigo
+    int frames_sprite_inimigo = 1;
 
     if (!inicializar()) {
         return -1;
@@ -432,6 +446,38 @@ int jogo(void) {
                 direcaoI *= -1; 
            
             desenha = 1;
+        }
+
+        //tentativa do sprite do inimigo
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
+            //a cada disparo do timer, incrementa cont_frames
+            cont_frames++;
+
+            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
+            if (cont_frames >= frames_sprite_inimigo) {
+                //reseta cont_frames
+                cont_frames = 0;
+                //incrementa a coluna atual, para mostrar o proximo sprite
+                coluna_atual++;
+                //se coluna atual passou da ultima coluna
+                if (coluna_atual >= colunas_folha) {
+                    //volta pra coluna inicial
+                    coluna_atual = 0;
+                    //incrementa a linha, se passar da ultima, volta pra primeira
+                    linha_atual = (linha_atual + 1) % linhas_folha;
+                    //calcula a posicao Y da folha que sera mostrada
+                    posy = linha_atual * altura_sprite;
+                }
+                //calcula a regiao X da folha que sera mostrada
+                posx = coluna_atual * largura_sprite;
+            }
+        }
+
+        if (desenha && al_is_event_queue_empty(fila_eventos)) {
+
+            al_draw_bitmap_region(inimigo_baixo, posx,
+                posy, largura_sprite, altura_sprite, posxI, posyI, 0);
+
         }
 
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
