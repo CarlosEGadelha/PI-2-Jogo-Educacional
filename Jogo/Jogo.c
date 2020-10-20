@@ -20,12 +20,12 @@ ALLEGRO_FONT* item = NULL;
 ALLEGRO_FONT* fugir = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_BITMAP* quadrado = NULL;
+ALLEGRO_BITMAP* inimigo_subtracao = NULL;
 ALLEGRO_BITMAP* direita = NULL;
 ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* parado = NULL;
-ALLEGRO_BITMAP* inimigo_baixo = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -101,8 +101,6 @@ int inicializar() {
         return 0;
     }
 
-
-
     //inicializa addon do teclado
     if (!al_install_keyboard()) {
         error_msg("Falha ao inicializar o teclado");
@@ -125,25 +123,17 @@ int inicializar() {
         return 0;
     }
 
-    //Inicia a imagem do inimigo
-    quadrado = al_create_bitmap(50, 50);
-    if (!quadrado) {
-        error_msg("Falha ao criar inimigo");
-        al_destroy_timer(timer);
-        al_destroy_display(janela);
-        return 0;
-    }
-    al_set_target_bitmap(quadrado);
-
-    inimigo_baixo = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
-    if (!inimigo_baixo) {
+    //carrega a folha de sprites na variavel
+    inimigo_subtracao = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
+    if (!inimigo_subtracao) {
         error_msg("Falha ao carregar sprites");
         al_destroy_timer(timer);
         al_destroy_display(janela);
         al_destroy_event_queue(fila_eventos);
         return 0;
     }
-    al_convert_mask_to_alpha(inimigo_baixo, al_map_rgb(255, 0, 255));
+    //usa a cor rosa como transparencia
+    al_convert_mask_to_alpha(inimigo_subtracao, al_map_rgb(255, 0, 255));
 
 
     //Inicia a imagem para a movimentação do personagem para a Direita
@@ -211,7 +201,6 @@ int inicializar() {
         al_destroy_bitmap(esquerda);
         al_destroy_bitmap(cima);
         al_destroy_bitmap(baixo);
-        al_destroy_bitmap(inimigo_baixo);
         return 0;
     }
 
@@ -412,21 +401,24 @@ int jogo(void) {
     //quando o loop principal deve encerrar
     int sair = 0;
     //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    int posx = 300, posxI= 700;
-    int posy = 400, posyI = 500;
+    int posx = 300, posxI = 600;
+    int posy = 400, posyI = 200;
     int direcao = 3, direcaoI = 3;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
+    int altura_spriteI = 160, largura_spriteI = 160;
     //quantos sprites tem em cada linha da folha, e a atualmente mostrada
     int colunas_folha = 3, coluna_atual = 0;
+    int colunas_folhaI = 3, coluna_atualI = 0;
     //quantos sprites tem em cada coluna da folha, e a atualmente mostrada
     int linha_atual = 0, linhas_folha = 2;
+    int linha_atualI = 0, linhas_folhaI = 2;
     //quantos frames devem se passar para atualizar para o proximo sprite
     int frames_sprite = 6, cont_frames = 0;
+    int frames_spriteI = 6, cont_framesI = 0;
     //posicao X Y da janela em que sera mostrado o sprite
     int regiao_x_folha = 0, regiao_y_folha = 0;
-    //sprites do inimigo
-    int frames_sprite_inimigo = 1;
+    int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
 
     if (!inicializar()) {
         return -1;
@@ -437,47 +429,14 @@ int jogo(void) {
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
 
-        //Loop de movimentacao do inimigo
         if (evento.type == ALLEGRO_EVENT_TIMER) {
 
             posyI += direcaoI;
             //se passou das bordas, inverte a direcao
-            if (posyI <= 490 || posyI >= 600)
-                direcaoI *= -1; 
-           
+            if (posyI <= 200 || posyI >= 400)
+                direcaoI *= -1;
+
             desenha = 1;
-        }
-
-        //tentativa do sprite do inimigo
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            //a cada disparo do timer, incrementa cont_frames
-            cont_frames++;
-
-            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
-            if (cont_frames >= frames_sprite_inimigo) {
-                //reseta cont_frames
-                cont_frames = 0;
-                //incrementa a coluna atual, para mostrar o proximo sprite
-                coluna_atual++;
-                //se coluna atual passou da ultima coluna
-                if (coluna_atual >= colunas_folha) {
-                    //volta pra coluna inicial
-                    coluna_atual = 0;
-                    //incrementa a linha, se passar da ultima, volta pra primeira
-                    linha_atual = (linha_atual + 1) % linhas_folha;
-                    //calcula a posicao Y da folha que sera mostrada
-                    posy = linha_atual * altura_sprite;
-                }
-                //calcula a regiao X da folha que sera mostrada
-                posx = coluna_atual * largura_sprite;
-            }
-        }
-
-        if (desenha && al_is_event_queue_empty(fila_eventos)) {
-
-            al_draw_bitmap_region(inimigo_baixo, posx,
-                posy, largura_sprite, altura_sprite, posxI, posyI, 0);
-
         }
 
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
@@ -563,6 +522,29 @@ int jogo(void) {
             }
         }
 
+        //Loop de movimentacao do inimigo
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
+            //a cada disparo do timer, incrementa cont_frames
+            cont_framesI++;
+            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
+            if (cont_framesI >= frames_spriteI) {
+                //reseta cont_frames
+                cont_framesI = 0;
+                //incrementa a coluna atual, para mostrar o proximo sprite
+                coluna_atualI++;
+                //se coluna atual passou da ultima coluna
+                if (coluna_atualI >= colunas_folhaI) {
+                    //volta pra coluna inicial
+                    coluna_atualI = 0;
+                    //incrementa a linha, se passar da ultima, volta pra primeira
+                    linha_atualI = (linha_atualI + 1) % linhas_folhaI;
+                    //calcula a posicao Y da folha que sera mostrada
+                    regiao_y_folhaI = linha_atualI * altura_spriteI;
+                }
+                //calcula a regiao X da folha que sera mostrada
+                regiao_x_folhaI = coluna_atualI * largura_spriteI;
+            }
+        }
 
         //Desenha a nova posição do Personagem na tela
         if (desenha && al_is_event_queue_empty(fila_eventos)) {
@@ -591,8 +573,9 @@ int jogo(void) {
             }
 
             //desenha o quadrado na tela nas posicoes X e Y
-            al_draw_bitmap(quadrado, posxI, posyI, 0);
-            
+            al_draw_bitmap_region(inimigo_subtracao, regiao_x_folhaI,
+                regiao_y_folhaI, largura_spriteI, altura_spriteI, posxI, posyI, 0);
+
             al_flip_display();
             desenha = 0;
         }
