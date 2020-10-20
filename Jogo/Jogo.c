@@ -6,6 +6,7 @@
 #include <allegro5/allegro_audio.h>
 #include <allegro5/allegro_acodec.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 //fps = frames per second = atualizacoes de tela por segundo
 #define FPS 60.0
@@ -401,8 +402,8 @@ int jogo(void) {
     //quando o loop principal deve encerrar
     int sair = 0;
     //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    int posx = 300, posxI = 600;
-    int posy = 400, posyI = 200;
+    //int posx = 300, posxI = 600;
+    //int posy = 400, posyI = 200;
     int direcao = 3, direcaoI = 3;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
@@ -420,6 +421,12 @@ int jogo(void) {
     int regiao_x_folha = 0, regiao_y_folha = 0;
     int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
 
+    struct caixa { int x, y; };
+    struct caixa box1, box2;
+
+    box1.x = 300; box1.y = 400;
+    box2.x = 600; box2.y = 200;
+
     if (!inicializar()) {
         return -1;
     }
@@ -429,11 +436,18 @@ int jogo(void) {
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
 
+        if (box1.x + 80 > box2.x && box1.x < box2.x + 80 && box1.y + 170 > box2.y && box1.y < box2.y + 160) {
+            printf("Colidiu\n");
+        }
+        else {
+            printf("Nao Colidiu\n");
+        }
+
         if (evento.type == ALLEGRO_EVENT_TIMER) {
 
-            posyI += direcaoI;
+            box2.y += direcaoI;
             //se passou das bordas, inverte a direcao
-            if (posyI <= 200 || posyI >= 400)
+            if (box2.y <= 200 || box2.y >= 400)
                 direcaoI *= -1;
 
             desenha = 1;
@@ -468,29 +482,29 @@ int jogo(void) {
             switch (tecla) {
             case 1:
                 //colisão de cima
-                if (posy >= 5) {
-                    posy -= direcao;
+                if (box1.y >= 5) {
+                    box1.y -= direcao;
                     break;
                 }
                 break;
             case 2:
                 //colisão de baixo
-                if (posy <= ALTURA_TELA - 180) {
-                    posy += direcao;
+                if (box1.y <= ALTURA_TELA - 180) {
+                    box1.y += direcao;
                     break;
                 }
                 break;
             case 3:
                 //colisão da esquerda
-                if (posx >= 70) {
-                    posx -= direcao;
+                if (box1.x >= 70) {
+                    box1.x -= direcao;
                     break;
                 }
                 break;
             case 4:
                 //colisão da direita
-                if (posx <= LARGURA_TELA - 130) {
-                    posx += direcao;
+                if (box1.x <= LARGURA_TELA - 130) {
+                    box1.x += direcao;
                     break;
                 }
                 break;
@@ -553,28 +567,28 @@ int jogo(void) {
 
             if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 4) {
                 al_draw_bitmap_region(direita, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 3) {
                 al_draw_bitmap_region(esquerda, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 2) {
                 al_draw_bitmap_region(baixo, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 1) {
                 al_draw_bitmap_region(cima, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
             }
             else {
                 al_draw_bitmap_region(parado, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, posx, posy, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
             }
 
             //desenha o quadrado na tela nas posicoes X e Y
             al_draw_bitmap_region(inimigo_subtracao, regiao_x_folhaI,
-                regiao_y_folhaI, largura_spriteI, altura_spriteI, posxI, posyI, 0);
+                regiao_y_folhaI, largura_spriteI, altura_spriteI, box2.x, box2.y, 0);
 
             al_flip_display();
             desenha = 0;
