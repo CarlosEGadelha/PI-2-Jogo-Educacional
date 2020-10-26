@@ -29,6 +29,7 @@ ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
+ALLEGRO_BITMAP* fundoBatalha = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
 ALLEGRO_BITMAP* botao_sair = NULL;
@@ -37,6 +38,22 @@ ALLEGRO_BITMAP* instrucoes = 0;
 ALLEGRO_BITMAP* menuDesenvolvedores = 0;
 ALLEGRO_BITMAP* voltarMenu = 0;
 ALLEGRO_BITMAP* fonteTitulo = 0;
+ALLEGRO_FONT* zero = NULL;
+ALLEGRO_FONT* um = NULL;
+ALLEGRO_FONT* dois = NULL;
+ALLEGRO_FONT* tres = NULL;
+ALLEGRO_FONT* quatro = NULL;
+ALLEGRO_FONT* cinco = NULL;
+ALLEGRO_FONT* seis = NULL;
+ALLEGRO_FONT* sete = NULL;
+ALLEGRO_FONT* oito = NULL;
+ALLEGRO_FONT* nove = NULL;
+ALLEGRO_FONT* confirmar = NULL;
+ALLEGRO_FONT* backspace = NULL;
+ALLEGRO_FONT* fonteCalculo = NULL;
+ALLEGRO_FONT* calculitoBatalha = NULL;
+ALLEGRO_FONT* subtracaoBatalha = NULL;
+
 
 void error_msg(char* text) {
     al_show_native_message_box(janela, "ERRO",
@@ -245,30 +262,513 @@ int colidiu(caixa box1, caixa box2) {
     }
 }
 
-//função que mostra a calculo
-int contaBatalha(int operacao) {
+//função que sorteia o primeiro numero
+int * sorteioNumeros() {
     //variaveis para sorteio
-    int num_1, num_2,vetor[3];
-
+    static int vetor[2];
     //sorteio dos numeros
     srand(time(0));
-    num_1 = rand() % 20 + 10;
-    num_2 = rand() % 10 + 1;
-
-    switch (operacao) {
-    case 0:
-        return num_1;
-    case 1:
-        return num_1, num_2, (num_1 + num_2);
-    case 2:
-        return num_1, num_2, (num_1 * num_2);
-    case 3:
-        return num_1, num_2, (int)(num_1/num_2);
+    for (int i = 0; i < 2; i++) {
+        vetor[i] = rand() %10;
     }
+    int aux;
+
+    if (vetor[0] < vetor[1]) {
+        aux = vetor[0];
+        vetor[0] = vetor[1];
+        vetor[1] = aux;
+    }
+
+    return vetor;
+}
+
+int resultadoCalculo(int num1, int num2) {
+    int resultado = num1 - num2;
+    printf("\n%d", resultado);
+    return resultado;
+}
+
+void acertou() {
+    char tcaixa[50] = "OLA";
+    char titulo[100] = "PARABENS";
+    char texto[200] = "VOCE ACETOU!!";
+    //mostra a caixa de texto
+    int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
+    printf("%i", r);
+    return 0;
+}
+
+void errou() {
+    char tcaixa[50] = "OLA";
+    char titulo[100] = "ERROU...";
+    char texto[200] = "BOA SORTE NA PROXIMA!!";
+    //mostra a caixa de texto
+    int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
+    printf("%i", r);
+    return 0;
+}
+
+int calculadora() {
+    if (!al_init()) {
+        error_msg("Falha ao inicializar a Allegro");
+        return -1;
+    }
+    al_init_font_addon();
+
+    if (!al_init_image_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_image");
+        return -1;
+    }
+
+    if (!al_init_ttf_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_ttf");
+        return -1;
+    }
+
+    fonteCalculo = al_load_font("arial.ttf", 58, 0);
+    if (!fonte) {
+        al_destroy_display(janela);
+        error_msg("Falha ao carregar fonte");
+        return 0;
+    }
+
+    zero = al_create_bitmap(200, 50);
+    if (!zero) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    um = al_create_bitmap(200, 50);
+    if (!um) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    dois = al_create_bitmap(200, 50);
+    if (!dois) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    tres = al_create_bitmap(200, 50);
+    if (!tres) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    quatro = al_create_bitmap(200, 50);
+    if (!quatro) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    cinco = al_create_bitmap(200, 50);
+    if (!cinco) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    seis = al_create_bitmap(200, 50);
+    if (!seis) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    sete = al_create_bitmap(200, 50);
+    if (!sete) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    oito = al_create_bitmap(200, 50);
+    if (!oito) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    nove = al_create_bitmap(200, 50);
+    if (!nove) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    confirmar = al_create_bitmap(200, 50);
+    if (!atacar) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    backspace = al_create_bitmap(200, 50);
+    if (!atacar) {
+        error_msg("Falha ao criar bitmap");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    if (!janela) {
+        error_msg("Falha ao criar janela");
+        return -1;
+    }
+    al_set_window_title(janela, "Batalha");
+
+    if (!al_install_mouse()) {
+        error_msg("Falha ao inicializar o mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
+        error_msg("Falha ao atribuir ponteiro do mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    fila_eventos = al_create_event_queue();
+    if (!fila_eventos) {
+        error_msg("Falha ao criar fila de eventos");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
+    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+
+    int menuZero = 0;
+    int menuUm = 0;
+    int menuDois = 0;
+    int menuTres = 0;
+    int menuQuatro = 0;
+    int menuCinco = 0;
+    int menuSeis = 0;
+    int menuSete = 0;
+    int menuOito = 0;
+    int menuNove = 0;
+    int menuConfirmar = 0;
+    int menuBackspace = 0;
+    int* numeros;
+    int num1, num2;
+    numeros = sorteioNumeros();
+    num1 = numeros[0];
+    num2 = numeros[1];
+    int resultado = resultadoCalculo(num1, num2);
+
+    while (!menuConfirmar) {
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        while (!al_is_event_queue_empty(fila_eventos)) {
+            ALLEGRO_EVENT evento;
+            al_wait_for_event(fila_eventos, &evento);
+
+            //Verifica se o mouse esta em algmenuUm dos botões
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 550) {
+                    menuZero = 1;
+                    if (resultado == 0) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 50 &&
+                    evento.mouse.x <= 250 &&
+                    evento.mouse.y >= 400 &&
+                    evento.mouse.y <= 450) {
+                    if (resultado == 1) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 400 &&
+                    evento.mouse.y <= 450) {
+                    if (resultado == 2) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 550 &&
+                    evento.mouse.x <= 750 &&
+                    evento.mouse.y >= 400 &&
+                    evento.mouse.y <= 450) {
+                    if (resultado == 3) {
+                        acertou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 50 &&
+                    evento.mouse.x <= 250 &&
+                    evento.mouse.y >= 300 &&
+                    evento.mouse.y <= 350) {
+                    if (resultado == 4) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 300 &&
+                    evento.mouse.y <= 350) {
+                    if (resultado == 5) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 550 &&
+                    evento.mouse.x <= 750 &&
+                    evento.mouse.y >= 300 &&
+                    evento.mouse.y <= 350) {
+                    if (resultado == 6) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 50 &&
+                    evento.mouse.x <= 250 &&
+                    evento.mouse.y >= 200 &&
+                    evento.mouse.y <= 250) {
+                    if (resultado == 7) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 200 &&
+                    evento.mouse.y <= 250) {
+                    if (resultado == 8) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 550 &&
+                    evento.mouse.x <= 750 &&
+                    evento.mouse.y >= 200 &&
+                    evento.mouse.y <= 250) {
+                    if (resultado == 9) {
+                        acertou();
+                    }
+                    else {
+                        errou();
+                    }
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+
+                /*if (evento.mouse.x >= 550 &&
+                    evento.mouse.x <= 750 &&
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 550) {
+                    menuConfirmar = 1;
+                    al_destroy_display(janela);
+                    menuBatalha();
+                }
+                else {
+                    errou();
+                }*/
+
+                /*if (evento.mouse.x >= 50 &&
+                    evento.mouse.x <= 250 &&
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 550) {
+                    menuBackspace = 1;
+                }
+                else {
+                    errou();
+                }*/
+            }
+        }
+
+        //Muda o cor do botão se o mouse estiver em cima
+        al_set_target_bitmap(zero);
+        if (!menuZero) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(0, 255, 0));
+        }
+
+        al_set_target_bitmap(um);
+        if (!menuUm) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(0, 0, 255));
+        }
+
+        al_set_target_bitmap(dois);
+        if (!menuDois) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(tres);
+        if (!menuTres) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(quatro);
+        if (!menuQuatro) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(cinco);
+        if (!menuCinco) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(seis);
+        if (!menuSeis) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(0, 255, 0));
+        }
+
+        al_set_target_bitmap(sete);
+        if (!menuSete) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(oito);
+        if (!menuOito) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(nove);
+        if (!menuNove) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        /*al_set_target_bitmap(confirmar);
+        if (!menuConfirmar) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }
+
+        al_set_target_bitmap(backspace);
+        if (!menuBackspace) {
+            al_clear_to_color(al_map_rgb(255, 255, 255));
+        }
+        else {
+            al_clear_to_color(al_map_rgb(255, 255, 0));
+        }*/
+
+        al_set_target_bitmap(al_get_backbuffer(janela));
+        al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d - %d", num1, num2);
+        al_draw_bitmap(zero, 300, 500, 0);
+        al_draw_bitmap(um, 50, 400, 0);
+        al_draw_bitmap(dois, 300, 400, 0);
+        al_draw_bitmap(tres, 550, 400, 0);
+        al_draw_bitmap(quatro, 50, 300, 0);
+        al_draw_bitmap(cinco, 300, 300, 0);
+        al_draw_bitmap(seis, 550, 300, 0);
+        al_draw_bitmap(sete, 50, 200, 0);
+        al_draw_bitmap(oito, 300, 200, 0);
+        al_draw_bitmap(nove, 550, 200, 0);
+        //al_draw_bitmap(backspace, 50, 500, 0);
+        //al_draw_bitmap(confirmar, 550, 500, 0);
+
+        al_flip_display();
+    }
+
+    al_destroy_bitmap(zero);
+    al_destroy_bitmap(um);
+    al_destroy_bitmap(dois);
+    al_destroy_bitmap(tres);
+    al_destroy_bitmap(quatro);
+    al_destroy_bitmap(cinco);
+    al_destroy_bitmap(seis);
+    al_destroy_bitmap(sete);
+    al_destroy_bitmap(oito);
+    al_destroy_bitmap(nove);
+    al_destroy_bitmap(confirmar);
+    al_destroy_bitmap(backspace);
+    al_destroy_display(janela);
+    al_destroy_event_queue(fila_eventos);
+
+    return 0;
 }
 
 //Função para a batalha
-int batalha(void) {
+int menuBatalha(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
@@ -293,25 +793,48 @@ int batalha(void) {
         return 0;
     }
 
-    atacar = al_create_bitmap(200, 65);
+    fundoBatalha = al_load_bitmap("Cenario/fundo_combate.bmp");
+    if (!fundoBatalha) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    calculitoBatalha = al_load_bitmap("sprites/Calculito_costas.bmp");
+    if (!calculitoBatalha) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+    al_convert_mask_to_alpha(calculitoBatalha, al_map_rgb(255, 0, 255));
+
+    subtracaoBatalha = al_load_bitmap("sprites/Subtracao_frente_final.bmp");
+    if (!subtracaoBatalha) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+    al_convert_mask_to_alpha(subtracaoBatalha, al_map_rgb(255, 0, 255));
+
+    atacar = al_load_bitmap("sprites/botao_ataque.bmp");
     if (!atacar) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    item = al_create_bitmap(200, 65);
+    item = al_load_bitmap("sprites/botao_item.bmp");
     if (!item) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    fugir = al_create_bitmap(200, 65);
+    fugir = al_load_bitmap("sprites/botao_run.bmp");
     if (!fugir) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
@@ -350,8 +873,7 @@ int batalha(void) {
     int menuFugir = 0;
 
     while (!sair) {
-        int valores[3];
-        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_draw_bitmap(fundoBatalha, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;        
             al_wait_for_event(fila_eventos, &evento);
@@ -360,10 +882,11 @@ int batalha(void) {
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
                 if (evento.mouse.x >= 50 &&
                     evento.mouse.x <= 250 &&
-                    evento.mouse.y >= 450 &&
-                    evento.mouse.y <= 515) {
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 565) {
+                    al_destroy_display(janela);
                     menuAtacar = 1;
-
+                    calculadora();
                 }
                 else {
                     menuAtacar = 0;
@@ -371,8 +894,8 @@ int batalha(void) {
 
                 if (evento.mouse.x >= 300 &&
                     evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 450 &&
-                    evento.mouse.y <= 515) {
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 565) {
                     menuItem = 1;
                 }
                 else {
@@ -381,8 +904,8 @@ int batalha(void) {
 
                 if (evento.mouse.x >= 550 &&
                     evento.mouse.x <= 750 &&
-                    evento.mouse.y >= 450 &&
-                    evento.mouse.y <= 515) {
+                    evento.mouse.y >= 500 &&
+                    evento.mouse.y <= 565) {
                     menuFugir = 1;
                 }
                 else {
@@ -391,43 +914,14 @@ int batalha(void) {
             }
         }
 
-        //Muda o cor do botão se o mouse estiver em cima
-        al_set_target_bitmap(atacar);
-        if (!menuAtacar) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 255, 0));
-        }
-
-        al_set_target_bitmap(item);
-        if (!menuItem) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 0, 255));
-        }
-
-        al_set_target_bitmap(fugir);
-        if (!menuFugir) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
         al_set_target_bitmap(al_get_backbuffer(janela));
-        
-        if (menuAtacar) {
-           al_draw_textf(fonte, al_map_rgb(0, 255, 0), LARGURA_TELA / 2, 90, ALLEGRO_ALIGN_CENTRE, " %d", contaBatalha(0));
-        }
-
-        al_draw_bitmap(atacar, 50, 450, 0);
-        al_draw_bitmap(item, 300, 450, 0);
-        al_draw_bitmap(fugir, 550, 450, 0);
+        al_draw_bitmap(calculitoBatalha, 100, 290, 0);
+        al_draw_bitmap(subtracaoBatalha, 460, 80, 0);
+        al_draw_bitmap(atacar, 50, 500, 0);
+        al_draw_bitmap(item, 300, 500, 0);
+        al_draw_bitmap(fugir, 550, 500, 0);
 
         al_flip_display();
-
     }
 
     al_destroy_bitmap(atacar);
@@ -492,11 +986,11 @@ int jogo(void) {
             //quando colidi com o inimigo
             if (colidiu(player, inimigosFase1[i])) {
                 al_destroy_display(janela);
-                batalha();
+                menuBatalha();
             }
             //quando não colidi o inimigo
             else {
-                printf("não colidiu \n");
+                printf("Nao colidiu \n");
             }   
         }
 
