@@ -7,6 +7,7 @@
 #include <allegro5/allegro_acodec.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 //fps = frames per second = atualizacoes de tela por segundo
 #define FPS 60.0
@@ -232,6 +233,40 @@ int inicializar() {
     return 1;
 }
 
+typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
+
+//função que calcula a colisão
+int colidiu(caixa box1, caixa box2) {
+    if (box1.x + 80 > box2.x && box1.x < box2.x + 80 && box1.y + 170 > box2.y && box1.y < box2.y + 160) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+}
+
+//função que mostra a calculo
+int contaBatalha(int operacao) {
+    //variaveis para sorteio
+    int num_1, num_2,vetor[3];
+
+    //sorteio dos numeros
+    srand(time(0));
+    num_1 = rand() % 20 + 10;
+    num_2 = rand() % 10 + 1;
+
+    switch (operacao) {
+    case 0:
+        return num_1;
+    case 1:
+        return num_1, num_2, (num_1 + num_2);
+    case 2:
+        return num_1, num_2, (num_1 * num_2);
+    case 3:
+        return num_1, num_2, (int)(num_1/num_2);
+    }
+}
+
 //Função para a batalha
 int batalha(void) {
     if (!al_init()) {
@@ -308,23 +343,27 @@ int batalha(void) {
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
+
     int sair = 0;
     int menuAtacar = 0;
     int menuItem = 0;
     int menuFugir = 0;
 
     while (!sair) {
+        int valores[3];
         al_clear_to_color(al_map_rgb(0, 0, 0));
         while (!al_is_event_queue_empty(fila_eventos)) {
-            ALLEGRO_EVENT evento;
+            ALLEGRO_EVENT evento;        
             al_wait_for_event(fila_eventos, &evento);
+
             //Verifica se o mouse esta em algum dos botões
-            if (evento.type == ALLEGRO_EVENT_MOUSE_AXES) {
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
                 if (evento.mouse.x >= 50 &&
                     evento.mouse.x <= 250 &&
                     evento.mouse.y >= 450 &&
                     evento.mouse.y <= 515) {
                     menuAtacar = 1;
+
                 }
                 else {
                     menuAtacar = 0;
@@ -378,6 +417,11 @@ int batalha(void) {
         }
 
         al_set_target_bitmap(al_get_backbuffer(janela));
+        
+        if (menuAtacar) {
+           al_draw_textf(fonte, al_map_rgb(0, 255, 0), LARGURA_TELA / 2, 90, ALLEGRO_ALIGN_CENTRE, " %d", contaBatalha(0));
+        }
+
         al_draw_bitmap(atacar, 50, 450, 0);
         al_draw_bitmap(item, 300, 450, 0);
         al_draw_bitmap(fugir, 550, 450, 0);
@@ -396,15 +440,12 @@ int batalha(void) {
 }
 
 int jogo(void) {
+    int i;
     int tecla = 0;
     //define quando a tela sera atualizada
     int desenha = 1;
     //quando o loop principal deve encerrar
     int sair = 0;
-    //posicao do quadrado e quanto ele andara a cada disparo do timer, para coordenada X e Y
-    //int posx = 300, posxI = 600;
-    //int posy = 400, posyI = 200;
-    int direcao = 3, direcaoI = 3;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
     int altura_spriteI = 160, largura_spriteI = 160;
@@ -421,11 +462,21 @@ int jogo(void) {
     int regiao_x_folha = 0, regiao_y_folha = 0;
     int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
 
-    struct caixa { int x, y; };
-    struct caixa box1, box2;
+    //criação das variaveis dos objetos
+    caixa player, inimigosFase1[2];
 
-    box1.x = 300; box1.y = 400;
-    box2.x = 600; box2.y = 200;
+    //inicialização do player
+    player.x = 300; player.y = 400;player.direcao_x = 3;player.direcao_y = 3;
+    
+    //inicialização do inimigo 1
+    inimigosFase1[0].x = 600; inimigosFase1[0].y = 200; 
+    inimigosFase1[0].lim_y_1 = 200; inimigosFase1[0].lim_y_2 = 400;
+    inimigosFase1[0].direcao_x = 0;inimigosFase1[0].direcao_y = 3;
+
+    //inicializacao do inimigo 2
+    inimigosFase1[1].x = 200; inimigosFase1[1].y = 100;
+    inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
+    inimigosFase1[1].direcao_x = 3;inimigosFase1[1].direcao_y = 0;
 
     if (!inicializar()) {
         return -1;
@@ -436,20 +487,38 @@ int jogo(void) {
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
 
-        if (box1.x + 80 > box2.x && box1.x < box2.x + 80 && box1.y + 170 > box2.y && box1.y < box2.y + 160) {
-            printf("Colidiu\n");
-        }
-        else {
-            printf("Nao Colidiu\n");
+        //fila de inimigos
+        for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+            //quando colidi com o inimigo
+            if (colidiu(player, inimigosFase1[i])) {
+                al_destroy_display(janela);
+                batalha();
+            }
+            //quando não colidi o inimigo
+            else {
+                printf("não colidiu \n");
+            }   
         }
 
+        //movimentacao dos inimigos
         if (evento.type == ALLEGRO_EVENT_TIMER) {
+            for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+                
+                inimigosFase1[i].x += inimigosFase1[i].direcao_x;
+                inimigosFase1[i].y += inimigosFase1[i].direcao_y;
+                
+                //se passou das bordas, inverte a direcao
+                if (inimigosFase1[i].x <= inimigosFase1[i].lim_x_1 ||
+                    inimigosFase1[i].x >= inimigosFase1[i].lim_x_2) {
+                        inimigosFase1[i].direcao_x *= -1;
+                }
 
-            box2.y += direcaoI;
-            //se passou das bordas, inverte a direcao
-            if (box2.y <= 200 || box2.y >= 400)
-                direcaoI *= -1;
-
+                if (inimigosFase1[i].y <= inimigosFase1[i].lim_y_1 ||
+                        inimigosFase1[i].y >= inimigosFase1[i].lim_y_2) {
+                        inimigosFase1[i].direcao_y *= -1;
+                }
+       
+            }
             desenha = 1;
         }
 
@@ -482,29 +551,29 @@ int jogo(void) {
             switch (tecla) {
             case 1:
                 //colisão de cima
-                if (box1.y >= 5) {
-                    box1.y -= direcao;
+                if (player.y >= 5) {
+                    player.y -= player.direcao_y;
                     break;
                 }
                 break;
             case 2:
                 //colisão de baixo
-                if (box1.y <= ALTURA_TELA - 180) {
-                    box1.y += direcao;
+                if (player.y <= ALTURA_TELA - 180) {
+                    player.y += player.direcao_y;
                     break;
                 }
                 break;
             case 3:
                 //colisão da esquerda
-                if (box1.x >= 70) {
-                    box1.x -= direcao;
+                if (player.x >= 70) {
+                    player.x -= player.direcao_x;
                     break;
                 }
                 break;
             case 4:
                 //colisão da direita
-                if (box1.x <= LARGURA_TELA - 130) {
-                    box1.x += direcao;
+                if (player.x <= LARGURA_TELA - 130) {
+                    player.x += player.direcao_x;
                     break;
                 }
                 break;
@@ -567,29 +636,30 @@ int jogo(void) {
 
             if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 4) {
                 al_draw_bitmap_region(direita, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 3) {
                 al_draw_bitmap_region(esquerda, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 2) {
                 al_draw_bitmap_region(baixo, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
             else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 1) {
                 al_draw_bitmap_region(cima, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
             else {
                 al_draw_bitmap_region(parado, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, box1.x, box1.y, 0);
+                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
 
-            //desenha o quadrado na tela nas posicoes X e Y
-            al_draw_bitmap_region(inimigo_subtracao, regiao_x_folhaI,
-                regiao_y_folhaI, largura_spriteI, altura_spriteI, box2.x, box2.y, 0);
-
+            for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+                //desenha o inimigo na tela nas posicoes X e Y
+                al_draw_bitmap_region(inimigo_subtracao, regiao_x_folhaI,
+                regiao_y_folhaI, largura_spriteI, altura_spriteI, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+            }
             al_flip_display();
             desenha = 0;
         }
