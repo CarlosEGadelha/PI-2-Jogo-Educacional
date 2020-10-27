@@ -294,7 +294,6 @@ void acertou() {
     char texto[200] = "VOCE ACETOU!!";
     //mostra a caixa de texto
     int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
-    printf("%i", r);
     return 0;
 }
 
@@ -304,7 +303,6 @@ void errou() {
     char texto[200] = "BOA SORTE NA PROXIMA!!";
     //mostra a caixa de texto
     int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
-    printf("%i", r);
     return 0;
 }
 
@@ -332,88 +330,88 @@ int calculadora() {
         return 0;
     }
 
-    zero = al_create_bitmap(200, 50);
+    zero = al_load_bitmap("sprites/botao_calculadora_0.bmp");
     if (!zero) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    um = al_create_bitmap(200, 50);
+    um = al_load_bitmap("sprites/botao_calculadora_1.bmp");
     if (!um) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    dois = al_create_bitmap(200, 50);
+    dois = al_load_bitmap("sprites/botao_calculadora_2.bmp");
     if (!dois) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    tres = al_create_bitmap(200, 50);
+    tres = al_load_bitmap("sprites/botao_calculadora_3.bmp");
     if (!tres) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    quatro = al_create_bitmap(200, 50);
+    quatro = al_load_bitmap("sprites/botao_calculadora_4.bmp");
     if (!quatro) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    cinco = al_create_bitmap(200, 50);
+    cinco = al_load_bitmap("sprites/botao_calculadora_5.bmp");
     if (!cinco) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    seis = al_create_bitmap(200, 50);
+    seis = al_load_bitmap("sprites/botao_calculadora_6.bmp");
     if (!seis) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    sete = al_create_bitmap(200, 50);
+    sete = al_load_bitmap("sprites/botao_calculadora_7.bmp");
     if (!sete) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    oito = al_create_bitmap(200, 50);
+    oito = al_load_bitmap("sprites/botao_calculadora_8.bmp");
     if (!oito) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    nove = al_create_bitmap(200, 50);
+    nove = al_load_bitmap("sprites/botao_calculadora_9.bmp");
     if (!nove) {
-        error_msg("Falha ao criar bitmap");
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    confirmar = al_create_bitmap(200, 50);
-    if (!atacar) {
-        error_msg("Falha ao criar bitmap");
+    confirmar = al_load_bitmap("sprites/botao_calculadora_confirmar.bmp");
+    if (!confirmar) {
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
-    backspace = al_create_bitmap(200, 50);
-    if (!atacar) {
-        error_msg("Falha ao criar bitmap");
+    backspace = al_load_bitmap("sprites/botao_calculadora_voltar.bmp");
+    if (!backspace) {
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
@@ -465,15 +463,15 @@ int calculadora() {
     int resultado = resultadoCalculo(num1, num2);
 
     while (!menuConfirmar) {
-        al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_clear_to_color(al_map_rgb(45, 45, 45));
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
 
             //Verifica se o mouse esta em algmenuUm dos botões
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
+                if (evento.mouse.x >= 350 &&
+                    evento.mouse.x <= 450 &&
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 550) {
                     menuZero = 1;
@@ -487,8 +485,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 50 &&
-                    evento.mouse.x <= 250 &&
+                if (evento.mouse.x >= 100 &&
+                    evento.mouse.x <= 200 &&
                     evento.mouse.y >= 400 &&
                     evento.mouse.y <= 450) {
                     if (resultado == 1) {
@@ -501,8 +499,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
+                if (evento.mouse.x >= 350 &&
+                    evento.mouse.x <= 450 &&
                     evento.mouse.y >= 400 &&
                     evento.mouse.y <= 450) {
                     if (resultado == 2) {
@@ -515,8 +513,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 550 &&
-                    evento.mouse.x <= 750 &&
+                if (evento.mouse.x >= 600 &&
+                    evento.mouse.x <= 700 &&
                     evento.mouse.y >= 400 &&
                     evento.mouse.y <= 450) {
                     if (resultado == 3) {
@@ -526,8 +524,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 50 &&
-                    evento.mouse.x <= 250 &&
+                if (evento.mouse.x >= 100 &&
+                    evento.mouse.x <= 200 &&
                     evento.mouse.y >= 300 &&
                     evento.mouse.y <= 350) {
                     if (resultado == 4) {
@@ -540,8 +538,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
+                if (evento.mouse.x >= 350 &&
+                    evento.mouse.x <= 450 &&
                     evento.mouse.y >= 300 &&
                     evento.mouse.y <= 350) {
                     if (resultado == 5) {
@@ -554,8 +552,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 550 &&
-                    evento.mouse.x <= 750 &&
+                if (evento.mouse.x >= 600 &&
+                    evento.mouse.x <= 700 &&
                     evento.mouse.y >= 300 &&
                     evento.mouse.y <= 350) {
                     if (resultado == 6) {
@@ -568,8 +566,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 50 &&
-                    evento.mouse.x <= 250 &&
+                if (evento.mouse.x >= 100 &&
+                    evento.mouse.x <= 200 &&
                     evento.mouse.y >= 200 &&
                     evento.mouse.y <= 250) {
                     if (resultado == 7) {
@@ -582,8 +580,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
+                if (evento.mouse.x >= 350 &&
+                    evento.mouse.x <= 450 &&
                     evento.mouse.y >= 200 &&
                     evento.mouse.y <= 250) {
                     if (resultado == 8) {
@@ -596,8 +594,8 @@ int calculadora() {
                     menuBatalha();
                 }
 
-                if (evento.mouse.x >= 550 &&
-                    evento.mouse.x <= 750 &&
+                if (evento.mouse.x >= 600 &&
+                    evento.mouse.x <= 700 &&
                     evento.mouse.y >= 200 &&
                     evento.mouse.y <= 250) {
                     if (resultado == 9) {
@@ -635,86 +633,6 @@ int calculadora() {
         }
 
         //Muda o cor do botão se o mouse estiver em cima
-        al_set_target_bitmap(zero);
-        if (!menuZero) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 255, 0));
-        }
-
-        al_set_target_bitmap(um);
-        if (!menuUm) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 0, 255));
-        }
-
-        al_set_target_bitmap(dois);
-        if (!menuDois) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(tres);
-        if (!menuTres) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(quatro);
-        if (!menuQuatro) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(cinco);
-        if (!menuCinco) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(seis);
-        if (!menuSeis) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(0, 255, 0));
-        }
-
-        al_set_target_bitmap(sete);
-        if (!menuSete) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(oito);
-        if (!menuOito) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
-        al_set_target_bitmap(nove);
-        if (!menuNove) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-        }
-        else {
-            al_clear_to_color(al_map_rgb(255, 255, 0));
-        }
-
         /*al_set_target_bitmap(confirmar);
         if (!menuConfirmar) {
             al_clear_to_color(al_map_rgb(255, 255, 255));
@@ -733,16 +651,16 @@ int calculadora() {
 
         al_set_target_bitmap(al_get_backbuffer(janela));
         al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d - %d", num1, num2);
-        al_draw_bitmap(zero, 300, 500, 0);
-        al_draw_bitmap(um, 50, 400, 0);
-        al_draw_bitmap(dois, 300, 400, 0);
-        al_draw_bitmap(tres, 550, 400, 0);
-        al_draw_bitmap(quatro, 50, 300, 0);
-        al_draw_bitmap(cinco, 300, 300, 0);
-        al_draw_bitmap(seis, 550, 300, 0);
-        al_draw_bitmap(sete, 50, 200, 0);
-        al_draw_bitmap(oito, 300, 200, 0);
-        al_draw_bitmap(nove, 550, 200, 0);
+        al_draw_bitmap(zero, 350, 500, 0);
+        al_draw_bitmap(um, 100, 400, 0);
+        al_draw_bitmap(dois, 350, 400, 0);
+        al_draw_bitmap(tres, 600, 400, 0);
+        al_draw_bitmap(quatro, 100, 300, 0);
+        al_draw_bitmap(cinco, 350, 300, 0);
+        al_draw_bitmap(seis, 600, 300, 0);
+        al_draw_bitmap(sete, 100, 200, 0);
+        al_draw_bitmap(oito, 350, 200, 0);
+        al_draw_bitmap(nove, 600, 200, 0);
         //al_draw_bitmap(backspace, 50, 500, 0);
         //al_draw_bitmap(confirmar, 550, 500, 0);
 
