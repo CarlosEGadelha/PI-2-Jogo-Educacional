@@ -272,8 +272,8 @@ int deletaInimgo(caixa *inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
 
-    printf("Chegou no deletaInimigos");
-    al_destroy_display(janela);
+    //printf("Chegou no deletaInimigos");
+    //al_destroy_display(janela);
     jogo();
 
     return 0;
@@ -312,7 +312,7 @@ void acertou() {
     //mostra a caixa de texto
     int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
     
-    return vidaInimigo-= 1;
+    return vidaInimigo -= 1;
 }
 
 int errou() {
@@ -320,7 +320,7 @@ int errou() {
     char titulo[100] = "ERROU...";
     char texto[200] = "BOA SORTE NA PROXIMA!!";
     //mostra a caixa de texto
-    int r = al_show_native_message_box(fonte, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
+    int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
 
     return VidaPlayer -= 1;
 
@@ -487,33 +487,31 @@ int calculadora() {
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
-
-            if (vidaInimigo == 0) {
-                deletaInimgo(ultimoColidido);
-                return 0;
-            }
             //Verifica se o mouse esta em algmenuUm dos botões
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
                 if (evento.mouse.x >= 350 &&
                     evento.mouse.x <= 450 &&
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 550) {
-                   if (resultado == 0) {
+                    if (resultado == 0) {
                         acertou();
                     }
                     else {
                         errou();
                     }
+
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
+                    }else if(VidaPlayer == 0){
+                        gameOver();
                     }
                     else {
-                        gameOver();
+                        deletaInimgo(ultimoColidido);
                         return 0;
-                    } 
+                    }
 
                 }
 
@@ -530,12 +528,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -553,12 +554,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -570,15 +574,21 @@ int calculadora() {
                     if (resultado == 3) {
                         acertou();
                     }
+                    else {
+                        errou();
+                    }
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -596,12 +606,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -619,12 +632,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -642,12 +658,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -665,12 +684,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -688,12 +710,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -711,12 +736,15 @@ int calculadora() {
                     
                     al_destroy_display(janela);
 
-                    if (VidaPlayer > 0) {
+                    if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else {
+                    else if (VidaPlayer == 0) {
                         gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
                         return 0;
                     }
                 }
@@ -897,6 +925,8 @@ int gameOver(void) {
         al_flip_display();
     }
 
+    al_destroy_display(janela);
+
     return 0;
 }
 
@@ -1017,7 +1047,10 @@ int menuBatalha(void) {
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;        
             al_wait_for_event(fila_eventos, &evento);
-
+            /*if (vidaInimigo == 0) {
+                deletaInimgo(ultimoColidido);
+                return 0;
+            }*/
             //Verifica se o mouse esta em algum dos botões
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
                 if (evento.mouse.x >= 50 &&
@@ -1025,11 +1058,7 @@ int menuBatalha(void) {
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
                     al_destroy_display(janela);
-                    menuAtacar = 1;
                     calculadora();
-                }
-                else {
-                    menuAtacar = 0;
                 }
 
                 if (evento.mouse.x >= 300 &&
@@ -1038,25 +1067,21 @@ int menuBatalha(void) {
                     evento.mouse.y <= 565) {
                     menuItem = 1;
                 }
-                else {
-                    menuItem = 0;
-                }
 
                 if (evento.mouse.x >= 550 &&
                     evento.mouse.x <= 750 &&
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
-                    menuFugir = 1;
-                }
-                else {
-                    menuFugir = 0;
+                    al_destroy_display(janela);
+                    player.x = 300; player.y = 300;
+                    jogo();
                 }
             }
         }
 
         al_set_target_bitmap(al_get_backbuffer(janela));
         al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 120, 30, ALLEGRO_ALIGN_CENTRE, "Player: %d", VidaPlayer);
-        al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 620, 30, ALLEGRO_ALIGN_RIGHT, "SubtraCao: %d", vidaInimigo);
+        al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "SubtraCao: %d", vidaInimigo);
         al_draw_bitmap(calculitoBatalha, 100, 290, 0);
         al_draw_bitmap(subtracaoBatalha, 460, 80, 0);
         al_draw_bitmap(atacar, 50, 500, 0);
@@ -1649,8 +1674,12 @@ int menu() {
                     evento.mouse.x <= 500 &&
                     evento.mouse.y >= 150 &&
                     evento.mouse.y <= 200) {
+                    al_destroy_bitmap(botao_sair);
+                    al_destroy_bitmap(jogar);
+                    al_destroy_bitmap(instrucoes);
+                    al_destroy_bitmap(menuDesenvolvedores);
                     al_destroy_display(janela);
-                    sair = 1;
+                    al_destroy_event_queue(fila_eventos);
                     jogo();
                     return 0;
                 }
@@ -1680,7 +1709,6 @@ int menu() {
                     evento.mouse.y >= 390 &&
                     evento.mouse.y <= 440) {
                     sair = 1;
-                    return 0;
                 }
             }
         }
