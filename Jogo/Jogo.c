@@ -930,6 +930,101 @@ int gameOver(void) {
     return 0;
 }
 
+int itens() {
+    if (!al_init()) {
+        error_msg("Falha ao inicializar a Allegro");
+        return -1;
+    }
+
+    al_init_font_addon();
+
+    if (!al_init_image_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_image");
+        return -1;
+    }
+
+    if (!al_init_ttf_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_ttf");
+        return -1;
+    }
+
+    fonte = al_load_font("arial.ttf", 48, 0);
+    if (!fonte) {
+        al_destroy_display(janela);
+        error_msg("Falha ao carregar fonte");
+        return 0;
+    }
+
+    atacar = al_load_bitmap("sprites/botao_ataque.bmp");
+    if (!atacar) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    if (!janela) {
+        error_msg("Falha ao criar janela");
+        return -1;
+    }
+    al_set_window_title(janela, "Batalha");
+
+    if (!al_install_mouse()) {
+        error_msg("Falha ao inicializar o mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
+        error_msg("Falha ao atribuir ponteiro do mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    fila_eventos = al_create_event_queue();
+    if (!fila_eventos) {
+        error_msg("Falha ao criar fila de eventos");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
+    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+
+
+    int sair = 0;
+    int menuAtacar = 0;
+
+    while (!sair) {
+        al_clear_to_color(al_map_rgb(0, 0, 0));
+        while (!al_is_event_queue_empty(fila_eventos)) {
+            ALLEGRO_EVENT evento;
+            al_wait_for_event(fila_eventos, &evento);
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                if (evento.mouse.x >= 300 &&
+                    evento.mouse.x <= 500 &&
+                    evento.mouse.y >= 200 &&
+                    evento.mouse.y <= 265) {
+                    al_destroy_display(janela);
+                    VidaPlayer = 3;
+                    menuBatalha();
+                }
+            }
+        }
+
+        al_set_target_bitmap(al_get_backbuffer(janela));
+        al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 25, ALLEGRO_ALIGN_CENTRE, "Inventario");
+        al_draw_bitmap(atacar, 300, 200, 0);
+
+        al_flip_display();
+    }
+
+    al_destroy_display(janela);
+    al_destroy_event_queue(fila_eventos);
+
+    return 0;
+}
+
 //Função para a batalha
 int menuBatalha(void) {
     if (!al_init()) {
@@ -1066,6 +1161,8 @@ int menuBatalha(void) {
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
                     menuItem = 1;
+                    al_destroy_display(janela);
+                    itens();
                 }
 
                 if (evento.mouse.x >= 550 &&
@@ -1674,10 +1771,6 @@ int menu() {
                     evento.mouse.x <= 500 &&
                     evento.mouse.y >= 150 &&
                     evento.mouse.y <= 200) {
-                    al_destroy_bitmap(botao_sair);
-                    al_destroy_bitmap(jogar);
-                    al_destroy_bitmap(instrucoes);
-                    al_destroy_bitmap(menuDesenvolvedores);
                     al_destroy_display(janela);
                     al_destroy_event_queue(fila_eventos);
                     jogo();
