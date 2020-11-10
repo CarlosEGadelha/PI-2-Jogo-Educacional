@@ -29,6 +29,9 @@ ALLEGRO_FONT* fugir = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_BITMAP* quadrado = NULL;
 ALLEGRO_BITMAP* inimigo_subtracao = NULL;
+ALLEGRO_BITMAP* inimigo_subtracao_esquerda = NULL;
+ALLEGRO_BITMAP* inimigo_subtracao_direita = NULL;
+ALLEGRO_BITMAP* inimigo_subtracao_costas = NULL;
 ALLEGRO_BITMAP* direita = NULL;
 ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
@@ -150,10 +153,45 @@ int inicializar() {
         return 0;
     }
 
+    //carrega a folha de sprites na variavel inimigo para direita
+    inimigo_subtracao_direita = al_load_bitmap("sprites/Subtracao_direita.bmp");
+    if (!inimigo_subtracao_direita) {
+        error_msg("Falha ao carregar sprites inimigo direita");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+    al_convert_mask_to_alpha(inimigo_subtracao_direita, al_map_rgb(255, 0, 255));
+
+    //carrega a folha de sprites na variavel inimigo para cima
+    inimigo_subtracao_costas = al_load_bitmap("sprites/Subtracao_andando_cima.bmp");
+    if (!inimigo_subtracao_costas) {
+        error_msg("Falha ao carregar sprites inimigo cima");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+
+    al_convert_mask_to_alpha(inimigo_subtracao_costas, al_map_rgb(255, 0, 255));
+
+    //carrega a folha de sprites na variavel inimigo para esquerda
+    inimigo_subtracao_esquerda = al_load_bitmap("sprites/Subtracao_esquerda.bmp");
+    if (!inimigo_subtracao_esquerda) {
+        error_msg("Falha ao carregar sprites inimigo esquerda");
+        al_destroy_timer(timer);
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+
+    al_convert_mask_to_alpha(inimigo_subtracao_esquerda, al_map_rgb(255, 0, 255));
+
     //carrega a folha de sprites na variavel
     inimigo_subtracao = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
     if (!inimigo_subtracao) {
-        error_msg("Falha ao carregar sprites");
+        error_msg("Falha ao carregar sprites inimigo baixo");
         al_destroy_timer(timer);
         al_destroy_display(janela);
         al_destroy_event_queue(fila_eventos);
@@ -1417,10 +1455,26 @@ int jogo(void) {
                     regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
             }
 
+            //desenha os inimigos
             for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
-                //desenha o inimigo na tela nas posicoes X e Y
-                al_draw_bitmap_region(inimigo_subtracao, regiao_x_folhaI,
-                regiao_y_folhaI, largura_spriteI, altura_spriteI, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+
+                if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x > 0) {
+                    al_draw_bitmap_region(inimigo_subtracao_direita, regiao_x_folha,
+                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                }
+                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x < 0) {
+                    al_draw_bitmap_region(inimigo_subtracao_esquerda, regiao_x_folha,
+                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                }
+                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y > 0) {
+                    al_draw_bitmap_region(inimigo_subtracao, regiao_x_folha,
+                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                }
+                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y < 0) {
+                    al_draw_bitmap_region(inimigo_subtracao_costas, regiao_x_folha,
+                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                }
+
             }
             al_flip_display();
             desenha = 0;
