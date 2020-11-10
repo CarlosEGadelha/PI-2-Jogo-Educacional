@@ -32,6 +32,7 @@ ALLEGRO_BITMAP* inimigo_subtracao = NULL;
 ALLEGRO_BITMAP* inimigo_subtracao_esquerda = NULL;
 ALLEGRO_BITMAP* inimigo_subtracao_direita = NULL;
 ALLEGRO_BITMAP* inimigo_subtracao_costas = NULL;
+ALLEGRO_BITMAP* itemPocao = NULL;
 ALLEGRO_BITMAP* direita = NULL;
 ALLEGRO_BITMAP* esquerda = NULL;
 ALLEGRO_BITMAP* cima = NULL;
@@ -64,7 +65,7 @@ ALLEGRO_FONT* calculitoBatalha = NULL;
 ALLEGRO_FONT* subtracaoBatalha = NULL;
 //ALLEGRO_FONT* vidaPlayer = 3;
 ALLEGRO_FONT* fonteVida = NULL;
-
+ALLEGRO_TIMER* fundoItem = NULL;
 
 void error_msg(char* text) {
     al_show_native_message_box(janela, "ERRO",
@@ -993,12 +994,21 @@ int itens() {
         return 0;
     }
 
-    atacar = al_load_bitmap("sprites/botao_ataque.bmp");
-    if (!atacar) {
+    fundoItem = al_load_bitmap("cenario/fundo_iventario.bmp");
+    if (!fundoItem) {
+        error_msg("Falha ao carregar fundo");
+        al_destroy_display(janela);
+        al_destroy_event_queue(fila_eventos);
+        return 0;
+    }
+
+    itemPocao = al_load_bitmap("sprites/pocao_cura.bmp");
+    if (!itemPocao) {
         error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
         return 0;
     }
+    al_convert_mask_to_alpha(itemPocao, al_map_rgb(255, 0, 255));
 
     janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
     if (!janela) {
@@ -1034,15 +1044,16 @@ int itens() {
     int menuAtacar = 0;
 
     while (!sair) {
-        al_clear_to_color(al_map_rgb(0, 0, 0));
+        //al_clear_to_color(al_map_rgb(0, 0, 0));
+        al_draw_bitmap_region(fundoItem, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
+                if (evento.mouse.x >= 320 &&
+                    evento.mouse.x <= 480 &&
                     evento.mouse.y >= 200 &&
-                    evento.mouse.y <= 265) {
+                    evento.mouse.y <= 360) {
                     al_destroy_display(janela);
                     VidaPlayer = 3;
                     menuBatalha();
@@ -1051,8 +1062,8 @@ int itens() {
         }
 
         al_set_target_bitmap(al_get_backbuffer(janela));
-        al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 25, ALLEGRO_ALIGN_CENTRE, "Inventario");
-        al_draw_bitmap(atacar, 300, 200, 0);
+        al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 15, ALLEGRO_ALIGN_CENTRE, "Inventario");
+        al_draw_bitmap(itemPocao, 320, 200, 0);
 
         al_flip_display();
     }
