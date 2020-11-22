@@ -18,7 +18,7 @@ typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direca
 int VidaPlayer = 3, vidaInimigo = 3, start = 0, qntPocao = 3; comeco = 0;
 caixa* ultimoColidido = NULL;
 //criação das variaveis dos objetos
-caixa player, inimigosFase1[2];
+caixa player, inimigosFase1[2], saida;
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -282,6 +282,18 @@ int inicializar() {
     al_start_timer(timer);
 
     return 1;
+}
+
+//função que calcula final da fase
+int finalFase1(caixa box, caixa box1) {
+
+    if (box.x + 80 == box1.x + 80 && box.y + 80 == box1.y + 80) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+
 }
 
 int colidiu(caixa box1, caixa box2) {
@@ -1282,6 +1294,10 @@ int jogo(void) {
         inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
         inimigosFase1[1].direcao_x = 3; inimigosFase1[1].direcao_y = 0;
 
+        
+        //inicialização da saida
+        saida.x = 400; saida.y = 50;
+
         start = 1;
     }
 
@@ -1305,9 +1321,18 @@ int jogo(void) {
             }
             //quando não colidi o inimigo
             else {
-                printf("Nao colidiu \n");
+                //printf("Nao colidiu \n");
             }
         }
+
+        //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
+        if (colidiu(player, saida) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
+
+            destroyJogo();
+            printf("Passou");
+            return 0;
+        }
+        
 
         //movimentacao dos inimigos
         if (evento.type == ALLEGRO_EVENT_TIMER) {
@@ -1389,6 +1414,7 @@ int jogo(void) {
             }
             desenha = 1;
         }
+
 
         if (evento.type == ALLEGRO_EVENT_TIMER) {
             //a cada disparo do timer, incrementa cont_frames
