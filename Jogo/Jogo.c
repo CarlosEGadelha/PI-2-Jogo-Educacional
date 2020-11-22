@@ -15,7 +15,7 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int VidaPlayer = 3, vidaInimigo = 3, start =0;
+int VidaPlayer = 3, vidaInimigo = 3, start = 0, qntPocao = 3; comeco = 0;
 caixa* ultimoColidido = NULL;
 //criação das variaveis dos objetos
 caixa player, inimigosFase1[2];
@@ -58,12 +58,11 @@ ALLEGRO_FONT* seis = NULL;
 ALLEGRO_FONT* sete = NULL;
 ALLEGRO_FONT* oito = NULL;
 ALLEGRO_FONT* nove = NULL;
-ALLEGRO_FONT* confirmar = NULL;
-ALLEGRO_FONT* backspace = NULL;
+//ALLEGRO_FONT* confirmar = NULL;
+//ALLEGRO_FONT* backspace = NULL;
 ALLEGRO_FONT* fonteCalculo = NULL;
 ALLEGRO_FONT* calculitoBatalha = NULL;
 ALLEGRO_FONT* subtracaoBatalha = NULL;
-//ALLEGRO_FONT* vidaPlayer = 3;
 ALLEGRO_FONT* fonteVida = NULL;
 ALLEGRO_TIMER* fundoItem = NULL;
 
@@ -137,15 +136,6 @@ int inicializar() {
         error_msg("Falha ao inicializar o teclado");
         return 0;
     }
-
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        al_destroy_timer(timer);
-        return 0;
-    }
-
-    al_set_window_title(janela, "Utilizando o Teclado");
 
     fonte = al_load_font("arial.ttf", 48, 0);
     if (!fonte) {
@@ -284,20 +274,16 @@ int inicializar() {
     //registra duas fontes de eventos na fila. o da janela, e do teclado
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_keyboard_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
     al_register_event_source(fila_eventos, al_get_timer_event_source(timer));
 
-    al_clear_to_color(al_map_rgb(255, 0, 0));
     al_set_target_bitmap(al_get_backbuffer(janela));
     fila_eventos, al_get_timer_event_source(timer);
-    al_clear_to_color(al_map_rgb(0, 0, 0));
     al_flip_display();
     al_start_timer(timer);
 
     return 1;
 }
 
-//função que calcula a colisão
 int colidiu(caixa box1, caixa box2) {
     if (box1.x + 80 > box2.x && box1.x < box2.x + 80 && box1.y + 170 > box2.y && box1.y < box2.y + 160) {
         return 1;
@@ -307,7 +293,7 @@ int colidiu(caixa box1, caixa box2) {
     }
 }
 
-int deletaInimgo(caixa *inimigo) {
+int deletaInimgo(caixa* inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
 
@@ -318,14 +304,13 @@ int deletaInimgo(caixa *inimigo) {
     return 0;
 }
 
-//função que sorteia o primeiro numero
-int * sorteioNumeros() {
+int* sorteioNumeros() {
     //variaveis para sorteio
     static int vetor[2];
     //sorteio dos numeros
     srand(time(0));
     for (int i = 0; i < 2; i++) {
-        vetor[i] = rand() %10;
+        vetor[i] = rand() % 10;
     }
     int aux;
 
@@ -350,7 +335,7 @@ void acertou() {
     char texto[200] = "VOCE ACETOU!!";
     //mostra a caixa de texto
     int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
-    
+
     return vidaInimigo -= 1;
 }
 
@@ -363,6 +348,21 @@ int errou() {
 
     return VidaPlayer -= 1;
 
+}
+
+int destroyCalculadora() {
+    al_destroy_font(fonteCalculo);
+    al_destroy_bitmap(zero);
+    al_destroy_bitmap(um);
+    al_destroy_bitmap(dois);
+    al_destroy_bitmap(tres);
+    al_destroy_bitmap(quatro);
+    al_destroy_bitmap(cinco);
+    al_destroy_bitmap(seis);
+    al_destroy_bitmap(sete);
+    al_destroy_bitmap(oito);
+    al_destroy_bitmap(nove);
+    al_destroy_event_queue(fila_eventos);
 }
 
 int calculadora() {
@@ -459,27 +459,6 @@ int calculadora() {
         return 0;
     }
 
-    confirmar = al_load_bitmap("sprites/botao_calculadora_confirmar.bmp");
-    if (!confirmar) {
-        error_msg("Falha ao carregar o arquivo de imagem");
-        al_destroy_display(janela);
-        return 0;
-    }
-
-    backspace = al_load_bitmap("sprites/botao_calculadora_voltar.bmp");
-    if (!backspace) {
-        error_msg("Falha ao carregar o arquivo de imagem");
-        al_destroy_display(janela);
-        return 0;
-    }
-
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "Batalha");
-
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
@@ -500,7 +479,6 @@ int calculadora() {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
     int menuZero = 0;
     int menuUm = 0;
@@ -539,12 +517,13 @@ int calculadora() {
                         errou();
                     }
 
-                    al_destroy_display(janela);
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
-                    }else if(VidaPlayer == 0){
+                    }
+                    else if (VidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -564,8 +543,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -590,8 +569,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -616,8 +595,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -642,8 +621,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -668,8 +647,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -694,8 +673,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -720,8 +699,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -746,8 +725,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -772,8 +751,8 @@ int calculadora() {
                     else {
                         errou();
                     }
-                    
-                    al_destroy_display(janela);
+
+                    destroyCalculadora();
 
                     if (VidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
@@ -847,33 +826,22 @@ int calculadora() {
         al_flip_display();
     }
 
-    al_destroy_bitmap(zero);
-    al_destroy_bitmap(um);
-    al_destroy_bitmap(dois);
-    al_destroy_bitmap(tres);
-    al_destroy_bitmap(quatro);
-    al_destroy_bitmap(cinco);
-    al_destroy_bitmap(seis);
-    al_destroy_bitmap(sete);
-    al_destroy_bitmap(oito);
-    al_destroy_bitmap(nove);
-    al_destroy_bitmap(confirmar);
-    al_destroy_bitmap(backspace);
-    al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    destroyCalculadora();
 
     return 0;
 }
 
-int gameOver(void) {
-    ALLEGRO_DISPLAY* janela = NULL;
-    ALLEGRO_FONT* fonte = NULL;
+int destroyGameOver() {
+    al_destroy_font(fonte);
+    al_destroy_bitmap(voltarMenu);
+    al_destroy_event_queue(fila_eventos);
+}
 
+int gameOver(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
     }
-
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
@@ -892,13 +860,6 @@ int gameOver(void) {
         error_msg("Falha ao carregar fonte");
         return -1;
     }
-
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "TUTORIAL");
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
@@ -927,12 +888,10 @@ int gameOver(void) {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
     int sair = 0;
 
     while (!sair) {
-        al_draw_bitmap(imagem, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
@@ -941,8 +900,7 @@ int gameOver(void) {
                     evento.mouse.x <= 210 &&
                     evento.mouse.y >= 10 &&
                     evento.mouse.y <= 60) {
-                    al_destroy_display(janela);
-                    sair = 1;
+                    destroyGameOver();
                     VidaPlayer = 3;
                     start = 0;
                     menu();
@@ -964,9 +922,17 @@ int gameOver(void) {
         al_flip_display();
     }
 
-    al_destroy_display(janela);
+    destroyGameOver();
 
     return 0;
+}
+
+int destroyItens() {
+    al_destroy_font(fonte);
+    al_destroy_bitmap(fundoItem);
+    al_destroy_bitmap(itemPocao);
+    al_destroy_bitmap(voltarMenu);
+    al_destroy_event_queue(fila_eventos);
 }
 
 int itens() {
@@ -974,7 +940,6 @@ int itens() {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
     }
-
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
@@ -994,6 +959,13 @@ int itens() {
         return 0;
     }
 
+    voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
+    if (!voltarMenu) {
+        error_msg("Falha ao criar botão de saída");
+        al_destroy_display(janela);
+        return 0;
+    }
+
     fundoItem = al_load_bitmap("cenario/fundo_iventario.bmp");
     if (!fundoItem) {
         error_msg("Falha ao carregar fundo");
@@ -1009,13 +981,6 @@ int itens() {
         return 0;
     }
     al_convert_mask_to_alpha(itemPocao, al_map_rgb(255, 0, 255));
-
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "Batalha");
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
@@ -1037,8 +1002,6 @@ int itens() {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
-
 
     int sair = 0;
     int menuAtacar = 0;
@@ -1054,8 +1017,17 @@ int itens() {
                     evento.mouse.x <= 480 &&
                     evento.mouse.y >= 200 &&
                     evento.mouse.y <= 360) {
-                    al_destroy_display(janela);
+                    destroyItens();
                     VidaPlayer = 3;
+                    qntPocao--;
+                    menuBatalha();
+                }
+
+                if (evento.mouse.x >= 10 &&
+                    evento.mouse.x <= 210 &&
+                    evento.mouse.y >= 10 &&
+                    evento.mouse.y <= 60) {
+                    destroyItens();
                     menuBatalha();
                 }
             }
@@ -1063,24 +1035,41 @@ int itens() {
 
         al_set_target_bitmap(al_get_backbuffer(janela));
         al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 15, ALLEGRO_ALIGN_CENTRE, "Inventario");
-        al_draw_bitmap(itemPocao, 320, 200, 0);
+        al_draw_bitmap(voltarMenu, 10, 10, 0);
+        if (qntPocao > 0) {
+            al_draw_textf(fonte, al_map_rgb(255, 255, 255), 470, 180, ALLEGRO_ALIGN_CENTRE, "%d", qntPocao);
+            al_draw_bitmap(itemPocao, 320, 200, 0);
+        }
+        else {
+            al_draw_textf(fonte, al_map_rgb(255, 255, 255), 2000, 2000, ALLEGRO_ALIGN_CENTRE, "%d", qntPocao);
+            al_draw_bitmap(itemPocao, 2000, 2000, 0);
+        }
 
         al_flip_display();
     }
 
-    al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    destroyItens();
 
     return 0;
 }
 
-//Função para a batalha
+int destroyMenuBatalha() {
+    al_destroy_font(fonte);
+    al_destroy_font(fonteVida);
+    al_destroy_bitmap(fundoBatalha);
+    al_destroy_bitmap(calculitoBatalha);
+    al_destroy_bitmap(subtracaoBatalha);
+    al_destroy_bitmap(atacar);
+    al_destroy_bitmap(item);
+    al_destroy_bitmap(fugir);
+    al_destroy_event_queue(fila_eventos);
+}
+
 int menuBatalha(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
     }
-
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
@@ -1151,13 +1140,6 @@ int menuBatalha(void) {
         return 0;
     }
 
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "Batalha");
-
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
@@ -1178,8 +1160,6 @@ int menuBatalha(void) {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
-
 
     int sair = 0;
     int menuAtacar = 0;
@@ -1189,7 +1169,7 @@ int menuBatalha(void) {
     while (!sair) {
         al_draw_bitmap(fundoBatalha, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
-            ALLEGRO_EVENT evento;        
+            ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             /*if (vidaInimigo == 0) {
                 deletaInimgo(ultimoColidido);
@@ -1201,7 +1181,7 @@ int menuBatalha(void) {
                     evento.mouse.x <= 250 &&
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
-                    al_destroy_display(janela);
+                    destroyMenuBatalha();
                     calculadora();
                 }
 
@@ -1210,7 +1190,7 @@ int menuBatalha(void) {
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
                     menuItem = 1;
-                    al_destroy_display(janela);
+                    destroyMenuBatalha();
                     itens();
                 }
 
@@ -1218,8 +1198,8 @@ int menuBatalha(void) {
                     evento.mouse.x <= 750 &&
                     evento.mouse.y >= 500 &&
                     evento.mouse.y <= 565) {
-                    al_destroy_display(janela);
                     player.x = 300; player.y = 300;
+                    destroyMenuBatalha();
                     jogo();
                 }
             }
@@ -1244,6 +1224,24 @@ int menuBatalha(void) {
     al_destroy_event_queue(fila_eventos);
 
     return 0;
+}
+
+int destroyJogo() {
+    al_destroy_font(fonte);
+    al_destroy_bitmap(inimigo_subtracao_costas);
+    al_destroy_bitmap(inimigo_subtracao_direita);
+    al_destroy_bitmap(inimigo_subtracao_esquerda);
+    al_destroy_bitmap(inimigo_subtracao);
+    al_destroy_bitmap(direita);
+    al_destroy_bitmap(esquerda);
+    al_destroy_bitmap(cima);
+    al_destroy_bitmap(baixo);
+    al_destroy_bitmap(parado);
+    al_destroy_bitmap(fundo);
+    al_destroy_timer(timer);
+    al_destroy_audio_stream(musica);
+    //al_destroy_display(janela);
+    al_destroy_event_queue(fila_eventos);
 }
 
 int jogo(void) {
@@ -1272,18 +1270,18 @@ int jogo(void) {
 
     if (start == 0) {
         //inicialização do player
-        player.x = 300; player.y = 400;player.direcao_x = 3;player.direcao_y = 3;
+        player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
 
         //inicialização do inimigo 1
         inimigosFase1[0].x = 600; inimigosFase1[0].y = 200;
         inimigosFase1[0].lim_y_1 = 200; inimigosFase1[0].lim_y_2 = 400;
-        inimigosFase1[0].direcao_x = 0;inimigosFase1[0].direcao_y = 3;
+        inimigosFase1[0].direcao_x = 0; inimigosFase1[0].direcao_y = 3;
 
         //inicializacao do inimigo 2
         inimigosFase1[1].x = 200; inimigosFase1[1].y = 100;
         inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
-        inimigosFase1[1].direcao_x = 3;inimigosFase1[1].direcao_y = 0;
-    
+        inimigosFase1[1].direcao_x = 3; inimigosFase1[1].direcao_y = 0;
+
         start = 1;
     }
 
@@ -1301,34 +1299,34 @@ int jogo(void) {
             //quando colidi com o inimigo
             if (colidiu(player, inimigosFase1[i])) {
                 ultimoColidido = &inimigosFase1[i];
-                al_destroy_display(janela);
+                destroyJogo();
                 menuBatalha();
                 return 0;
             }
             //quando não colidi o inimigo
             else {
                 printf("Nao colidiu \n");
-            }   
+            }
         }
 
         //movimentacao dos inimigos
         if (evento.type == ALLEGRO_EVENT_TIMER) {
             for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
-                
+
                 inimigosFase1[i].x += inimigosFase1[i].direcao_x;
                 inimigosFase1[i].y += inimigosFase1[i].direcao_y;
-                
+
                 //se passou das bordas, inverte a direcao
                 if (inimigosFase1[i].x <= inimigosFase1[i].lim_x_1 ||
                     inimigosFase1[i].x >= inimigosFase1[i].lim_x_2) {
-                        inimigosFase1[i].direcao_x *= -1;
+                    inimigosFase1[i].direcao_x *= -1;
                 }
 
                 if (inimigosFase1[i].y <= inimigosFase1[i].lim_y_1 ||
-                        inimigosFase1[i].y >= inimigosFase1[i].lim_y_2) {
-                        inimigosFase1[i].direcao_y *= -1;
+                    inimigosFase1[i].y >= inimigosFase1[i].lim_y_2) {
+                    inimigosFase1[i].direcao_y *= -1;
                 }
-       
+
             }
             desenha = 1;
         }
@@ -1492,7 +1490,7 @@ int jogo(void) {
         }
     }
 
-    al_destroy_bitmap(direita);
+    /*al_destroy_bitmap(direita);
     al_destroy_bitmap(esquerda);
     al_destroy_bitmap(baixo);
     al_destroy_bitmap(cima);
@@ -1500,22 +1498,26 @@ int jogo(void) {
     al_destroy_bitmap(quadrado);
     al_destroy_timer(timer);
     al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    al_destroy_event_queue(fila_eventos);*/
+
+    destroyJogo();
 
     return 0;
 }
 
+int destroyTutoDes() {
+    al_destroy_font(fonte);
+    al_destroy_font(fonteTitulo);
+    al_destroy_bitmap(voltarMenu);
+    al_destroy_event_queue(fila_eventos);
+    //al_destroy_display(janela);
+}
 
-//Função Tutorial
 int tutorial() {
-    ALLEGRO_DISPLAY* janela = NULL;
-    ALLEGRO_FONT* fonte = NULL;
-
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
     }
-
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
@@ -1542,12 +1544,12 @@ int tutorial() {
         return -1;
     }
 
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "TUTORIAL");
+    //janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+    //if (!janela) {
+    //    error_msg("Falha ao criar janela");
+    //    return -1;
+    //}
+    //al_set_window_title(janela, "TUTORIAL");
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
@@ -1576,12 +1578,11 @@ int tutorial() {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+    /*al_register_event_source(fila_eventos, al_get_display_event_source(janela));*/
 
     int sair = 0;
 
     while (!sair) {
-        al_draw_bitmap(imagem, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
@@ -1590,8 +1591,7 @@ int tutorial() {
                     evento.mouse.x <= 210 &&
                     evento.mouse.y >= 10 &&
                     evento.mouse.y <= 60) {
-                    al_destroy_display(janela);
-                    sair = 1;
+                    destroyTutoDes();
                     menu();
                 }
             }
@@ -1618,12 +1618,7 @@ int tutorial() {
     return 0;
 }
 
-
-//Função Desenvolvedores
 int desenvolvedores() {
-    ALLEGRO_DISPLAY* janela = NULL;
-    ALLEGRO_FONT* fonte = NULL;
-
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return -1;
@@ -1655,13 +1650,6 @@ int desenvolvedores() {
         return -1;
     }
 
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "DESENVOLVEDORES");
-
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
@@ -1689,12 +1677,10 @@ int desenvolvedores() {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
     int sair = 0;
 
     while (!sair) {
-        al_draw_bitmap(imagem, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
@@ -1703,8 +1689,7 @@ int desenvolvedores() {
                     evento.mouse.x <= 210 &&
                     evento.mouse.y >= 10 &&
                     evento.mouse.y <= 60) {
-                    al_destroy_display(janela);
-                    sair = 1;
+                    destroyTutoDes();
                     menu();
                 }
             }
@@ -1730,8 +1715,15 @@ int desenvolvedores() {
     return 0;
 }
 
+int destroyMenu() {
+    al_destroy_bitmap(botao_sair);
+    al_destroy_bitmap(jogar);
+    al_destroy_bitmap(instrucoes);
+    al_destroy_bitmap(menuDesenvolvedores);
+    al_destroy_bitmap(imagem);
+    al_destroy_event_queue(fila_eventos);
+}
 
-//Função Menu
 int menu() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
@@ -1750,19 +1742,24 @@ int menu() {
         return -1;
     }
 
-    fonte = al_load_font("arial.ttf", 48, 0);
+    /*fonte = al_load_font("arial.ttf", 48, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
         return -1;
+    }*/
+
+    if (comeco == 0) {
+        janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+        if (!janela) {
+            error_msg("Falha ao criar janela");
+            return -1;
+        }
+        al_set_window_title(janela, "Menu");
+
+        comeco = 1;
     }
 
-    janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
-    if (!janela) {
-        error_msg("Falha ao criar janela");
-        return -1;
-    }
-    al_set_window_title(janela, "Menu");
 
     imagem = al_load_bitmap("Cenario/Menu.bmp");
     if (!imagem) {
@@ -1836,30 +1833,24 @@ int menu() {
                     evento.mouse.x <= 500 &&
                     evento.mouse.y >= 150 &&
                     evento.mouse.y <= 200) {
-                    al_destroy_display(janela);
-                    al_destroy_event_queue(fila_eventos);
+                    destroyMenu();
                     jogo();
-                    return 0;
                 }
 
                 if (evento.mouse.x >= 300 &&
                     evento.mouse.x <= 500 &&
                     evento.mouse.y >= 230 &&
                     evento.mouse.y <= 280) {
-                    al_destroy_display(janela);
-                    sair = 1;
+                    destroyMenu();
                     tutorial();
-                    return 0;
                 }
 
                 if (evento.mouse.x >= 300 &&
                     evento.mouse.x <= 500 &&
                     evento.mouse.y >= 310 &&
                     evento.mouse.y <= 360) {
-                    al_destroy_display(janela);
-                    sair = 1;
+                    destroyMenu();
                     desenvolvedores();
-                    return 0;
                 }
 
                 if (evento.mouse.x >= 300 &&
@@ -1882,18 +1873,12 @@ int menu() {
         al_flip_display();
     }
 
-    al_destroy_bitmap(botao_sair);
-    al_destroy_bitmap(jogar);
-    al_destroy_bitmap(instrucoes);
-    al_destroy_bitmap(menuDesenvolvedores);
-    al_destroy_display(janela);
-    al_destroy_event_queue(fila_eventos);
+    destroyMenu();
 
     return 0;
 }
 
 int main(void) {
     menu();
-    //batalha();
     return 0;
 }
