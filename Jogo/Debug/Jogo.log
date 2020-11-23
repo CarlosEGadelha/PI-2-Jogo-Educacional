@@ -1,71 +1,72 @@
 ﻿  Jogo.c
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(129,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(314,9): warning C4013: 'jogo' indefinido; assumindo extern retornando int
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(351,28): warning C4098: 'acertou': função 'void' retornando um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(367,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(368,25): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(369,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(370,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(371,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(372,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(373,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(374,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(375,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(376,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(404,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(411,59): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(418,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(425,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(432,63): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(439,62): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(446,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(453,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(460,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(467,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(535,36): warning C4013: 'menuBatalha' indefinido; assumindo extern retornando int
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(539,33): warning C4013: 'gameOver' indefinido; assumindo extern retornando int
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(825,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(826,26): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(827,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(828,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(829,30): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(830,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(831,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(832,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(833,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(834,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(918,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(944,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_TIMER *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(981,62): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_TIMER *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1023,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_TIMER *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1072,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1073,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1074,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1075,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1076,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1118,70): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1124,46): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1126,76): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1132,46): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1134,56): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1141,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1148,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1223,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1224,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1225,30): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1226,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1227,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1232,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1233,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1234,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1540,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1570,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1676,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(378): warning C4716: 'destroyCalculadora': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(850): warning C4716: 'destroyGameOver': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(948): warning C4716: 'destroyItens': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1078): warning C4716: 'destroyMenuBatalha': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1257): warning C4716: 'destroyJogo': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1544): warning C4716: 'destroyTutoDes': deve retornar um valor
-C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1755): warning C4716: 'destroyMenu': deve retornar um valor
-  Jogo.vcxproj -> C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Debug\Jogo.exe
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(131,33): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(516,16): warning C4013: 'fase_um' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(519,18): warning C4013: 'fase_dois' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(557,28): warning C4098: 'acertou': função 'void' retornando um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(573,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(574,25): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(575,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(576,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(577,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(578,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(579,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(580,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(581,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(582,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(610,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(617,59): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(624,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(631,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(638,63): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(645,62): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(652,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(659,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(666,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(673,61): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(741,36): warning C4013: 'menuBatalha' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(745,33): warning C4013: 'gameOver' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1033,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1034,26): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1035,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1036,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1037,30): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1038,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1039,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1040,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1041,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1042,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1126,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1152,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_TIMER *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1189,62): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_TIMER *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1231,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_TIMER *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1280,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1281,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1282,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1283,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1284,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1326,70): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1332,46): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1334,76): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1340,46): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1342,56): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1349,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1356,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1434,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1435,40): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1436,30): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1437,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1438,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1443,29): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1444,27): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1445,28): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(2022,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(2052,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(2158,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(584): warning C4716: 'destroyCalculadora': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1058): warning C4716: 'destroyGameOver': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1156): warning C4716: 'destroyItens': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1286): warning C4716: 'destroyMenuBatalha': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(1468): warning C4716: 'destroyJogo': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(2026): warning C4716: 'destroyTutoDes': deve retornar um valor
+C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Jogo\Jogo.c(2237): warning C4716: 'destroyMenu': deve retornar um valor
+  Jogo.vcxproj -> C:\Users\eduar\OneDrive\Área de Trabalho\PI-2\Debug\Jogo.exe
