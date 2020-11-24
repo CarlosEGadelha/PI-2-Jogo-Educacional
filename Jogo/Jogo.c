@@ -15,10 +15,13 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int VidaPlayer = 3, vidaInimigo = 3, start = 0, start_dois =0,fase_atual=0, qntPocao = 3, comeco = 0;
+int VidaPlayer = 3, vidaInimigo = 3, start = 0, start_dois =0, fase_atual=0, qntPocao = 3, comeco = 0, fase01 = 0;
+int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
 //criação das variaveis dos objetos
-caixa player, inimigosFase1[2],inimigosFase2[2], saida;
+caixa player, inimigosFase1[2],inimigosFase2[2], saidaFase01, voltaFase01;
+
+ALLEGRO_MONITOR_INFO info;
 
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
@@ -724,10 +727,10 @@ int calculadora() {
             al_wait_for_event(fila_eventos, &evento);
             //Verifica se o mouse esta em algmenuUm dos botões
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 350 &&
-                    evento.mouse.x <= 450 &&
-                    evento.mouse.y >= 500 &&
-                    evento.mouse.y <= 550) {
+                if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 450 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 0) {
                         acertou();
                     }
@@ -753,10 +756,10 @@ int calculadora() {
 
                 }
 
-                if (evento.mouse.x >= 100 &&
-                    evento.mouse.x <= 200 &&
-                    evento.mouse.y >= 400 &&
-                    evento.mouse.y <= 450) {
+                if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 200 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 400 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 450 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 1) {
                         acertou();
                     }
@@ -779,10 +782,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 350 &&
-                    evento.mouse.x <= 450 &&
-                    evento.mouse.y >= 400 &&
-                    evento.mouse.y <= 450) {
+                if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 450 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 400 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 450 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 2) {
                         acertou();
                     }
@@ -805,10 +808,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 600 &&
-                    evento.mouse.x <= 700 &&
-                    evento.mouse.y >= 400 &&
-                    evento.mouse.y <= 450) {
+                if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 700 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 400 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 450 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 3) {
                         acertou();
                     }
@@ -831,10 +834,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 100 &&
-                    evento.mouse.x <= 200 &&
-                    evento.mouse.y >= 300 &&
-                    evento.mouse.y <= 350) {
+                if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 200 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 300 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 350 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 4) {
                         acertou();
                     }
@@ -857,10 +860,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 350 &&
-                    evento.mouse.x <= 450 &&
-                    evento.mouse.y >= 300 &&
-                    evento.mouse.y <= 350) {
+                if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 450 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 300 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 350 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 5) {
                         acertou();
                     }
@@ -883,10 +886,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 600 &&
-                    evento.mouse.x <= 700 &&
-                    evento.mouse.y >= 300 &&
-                    evento.mouse.y <= 350) {
+                if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 700 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 300 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 350 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 6) {
                         acertou();
                     }
@@ -909,10 +912,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 100 &&
-                    evento.mouse.x <= 200 &&
-                    evento.mouse.y >= 200 &&
-                    evento.mouse.y <= 250) {
+                if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 200 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 200 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 250 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 7) {
                         acertou();
                     }
@@ -935,10 +938,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 350 &&
-                    evento.mouse.x <= 450 &&
-                    evento.mouse.y >= 200 &&
-                    evento.mouse.y <= 250) {
+                if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 450 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 200 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 250 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 8) {
                         acertou();
                     }
@@ -961,10 +964,10 @@ int calculadora() {
                     }
                 }
 
-                if (evento.mouse.x >= 600 &&
-                    evento.mouse.x <= 700 &&
-                    evento.mouse.y >= 200 &&
-                    evento.mouse.y <= 250) {
+                if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 700 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 200 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 250 * (res_y_comp / (float)ALTURA_TELA)) {
                     if (resultado == 9) {
                         acertou();
                     }
@@ -1116,10 +1119,10 @@ int gameOver(void) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 10 &&
-                    evento.mouse.x <= 210 &&
-                    evento.mouse.y >= 10 &&
-                    evento.mouse.y <= 60) {
+                if (evento.mouse.x >= 10 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 210 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyGameOver();
                     VidaPlayer = 3;
                     start = 0;
@@ -1233,20 +1236,20 @@ int itens() {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 320 &&
-                    evento.mouse.x <= 480 &&
-                    evento.mouse.y >= 200 &&
-                    evento.mouse.y <= 360) {
+                if (evento.mouse.x >= 320 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 480 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 200 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 360 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyItens();
                     VidaPlayer = 3;
                     qntPocao--;
                     menuBatalha(fase_atual);
                 }
 
-                if (evento.mouse.x >= 10 &&
-                    evento.mouse.x <= 210 &&
-                    evento.mouse.y >= 10 &&
-                    evento.mouse.y <= 60) {
+                if (evento.mouse.x >= 10 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 210 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyItens();
                     menuBatalha(fase_atual);
                 }
@@ -1257,7 +1260,7 @@ int itens() {
         al_draw_text(fonte, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 15, ALLEGRO_ALIGN_CENTRE, "Inventario");
         al_draw_bitmap(voltarMenu, 10, 10, 0);
         if (qntPocao > 0) {
-            al_draw_textf(fonte, al_map_rgb(255, 255, 255), 470, 180, ALLEGRO_ALIGN_CENTRE, "%d", qntPocao);
+            al_draw_textf(fonte, al_map_rgb(255, 255, 255), 310, 180, ALLEGRO_ALIGN_CENTRE, "%d", qntPocao);
             al_draw_bitmap(itemPocao, 320, 200, 0);
         }
         else {
@@ -1397,27 +1400,27 @@ int menuBatalha(void) {
             }*/
             //Verifica se o mouse esta em algum dos botões
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 50 &&
-                    evento.mouse.x <= 250 &&
-                    evento.mouse.y >= 500 &&
-                    evento.mouse.y <= 565) {
+                if (evento.mouse.x >= 50 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 250 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenuBatalha();
                     calculadora();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 500 &&
-                    evento.mouse.y <= 565) {
+                if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
                     menuItem = 1;
                     destroyMenuBatalha();
                     itens();
                 }
 
-                if (evento.mouse.x >= 550 &&
-                    evento.mouse.x <= 750 &&
-                    evento.mouse.y >= 500 &&
-                    evento.mouse.y <= 565) {
+                if (evento.mouse.x >= 550 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 750 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
                     player.x = 300; player.y = 300;
                     destroyMenuBatalha();
                     if (fase_atual == 1)
@@ -1476,7 +1479,7 @@ int fase_um(void) {
     int sair = 0;
     //largura e altura de cada sprite dentro da folha
     int altura_sprite = 170, largura_sprite = 160;
-    int altura_spriteI = 160, largura_spriteI = 160;
+    int altura_spriteI = 170, largura_spriteI = 160;
     //quantos sprites tem em cada linha da folha, e a atualmente mostrada
     int colunas_folha = 3, coluna_atual = 0;
     int colunas_folhaI = 3, coluna_atualI = 0;
@@ -1505,9 +1508,8 @@ int fase_um(void) {
         inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
         inimigosFase1[1].direcao_x = 3; inimigosFase1[1].direcao_y = 0;
 
-        
         //inicialização da saida
-        saida.x = 400; saida.y = -10;
+        saidaFase01.x = 400; saidaFase01.y = -100;
 
         start = 1;
     }
@@ -1537,11 +1539,10 @@ int fase_um(void) {
         }
 
         //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
-        if (colidiu(player, saida) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
-
+        if (colidiu(player, saidaFase01) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
             destroyJogo();
+            player.x = 300; player.y = 400;
             fase_dois();
-            return 0;
         }
         
 
@@ -1581,6 +1582,9 @@ int fase_um(void) {
             case ALLEGRO_KEY_RIGHT:
                 tecla = 4;
                 break;
+            /*case ALLEGRO_KEY_D:
+                tecla = 5;
+                break;*/
             }
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
@@ -1596,7 +1600,7 @@ int fase_um(void) {
             switch (tecla) {
             case 1:
                 //colisão de cima
-                if (player.y >= 5) {
+                if (player.y >= 0) {
                     player.y -= player.direcao_y;
                     break;
                 }
@@ -1782,7 +1786,7 @@ int fase_dois(void) {
 
 
         //inicialização da saida
-        saida.x = 400; saida.y = 50;
+        voltaFase01.x = 300; voltaFase01.y = 590;
 
         start_dois = 1;
     }
@@ -1812,12 +1816,13 @@ int fase_dois(void) {
         }
 
         //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
-        /*if (colidiu(player, saida) && inimigosFase2[0].x == 2000 && inimigosFase2[1].x == 2000) {
-
+        if (colidiu(player, voltaFase01)) {
             destroyJogo();
-            printf("Passou");
+            player.x = 400; player.y = 100;
+            fase_um();
+            //printf("Passou");
             return 0;
-        }*/
+        }
 
 
         //movimentacao dos inimigos
@@ -2099,10 +2104,10 @@ int tutorial() {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 10 &&
-                    evento.mouse.x <= 210 &&
-                    evento.mouse.y >= 10 &&
-                    evento.mouse.y <= 60) {
+                if (evento.mouse.x >= 10 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 210 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyTutoDes();
                     menu();
                 }
@@ -2197,10 +2202,10 @@ int desenvolvedores() {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 10 &&
-                    evento.mouse.x <= 210 &&
-                    evento.mouse.y >= 10 &&
-                    evento.mouse.y <= 60) {
+                if (evento.mouse.x >= 10 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 210 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyTutoDes();
                     menu();
                 }
@@ -2262,16 +2267,30 @@ int menu() {
     }*/
 
     if (comeco == 0) {
-        janela = al_create_display(LARGURA_TELA, ALTURA_TELA);
+        al_get_monitor_info(0, &info);
+        res_x_comp = info.x2 - info.x1;
+        res_y_comp = info.y2 - info.y1;
+
+        al_set_new_display_flags(ALLEGRO_FULLSCREEN_WINDOW);
+        janela = al_create_display(res_x_comp, res_y_comp);
+
+        /*janela = al_create_display(LARGURA_TELA, ALTURA_TELA);*/
         if (!janela) {
             error_msg("Falha ao criar janela");
             return -1;
         }
         al_set_window_title(janela, "Menu");
 
+        float red_x = res_x_comp / (float)LARGURA_TELA;
+        float red_y = res_y_comp / (float)ALTURA_TELA;
+
+        ALLEGRO_TRANSFORM transformar;
+        al_identity_transform(&transformar);
+        al_scale_transform(&transformar, red_x, red_y);
+        al_use_transform(&transformar);
+
         comeco = 1;
     }
-
 
     imagem = al_load_bitmap("Cenario/Menu.bmp");
     if (!imagem) {
@@ -2341,40 +2360,40 @@ int menu() {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
             if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 150 &&
-                    evento.mouse.y <= 200) {
+                if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 150 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 200 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenu();
                     fase_um();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 230 &&
-                    evento.mouse.y <= 280) {
+                if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 230 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 280 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenu();
                     tutorial();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 310 &&
-                    evento.mouse.y <= 360) {
+                if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 310 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 360 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenu();
                     desenvolvedores();
                 }
 
-                if (evento.mouse.x >= 300 &&
-                    evento.mouse.x <= 500 &&
-                    evento.mouse.y >= 390 &&
-                    evento.mouse.y <= 440) {
+                if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 390 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 440 * (res_y_comp / (float)ALTURA_TELA)) {
                     sair = 1;
                 }
             }
         }
 
-        al_set_target_bitmap(botao_sair);
+       al_set_target_bitmap(botao_sair);
 
         al_set_target_bitmap(al_get_backbuffer(janela));
         al_draw_bitmap(jogar, 300, 150, 0);
