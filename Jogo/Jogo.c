@@ -15,11 +15,12 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int VidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, fase_atual = 0, qntPocao = 3, comeco = 0, fase01 = 0, inimigoAtual = 0;
+int VidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0;
+//fase01 = 0,
 int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
 //criação das variaveis dos objetos
-caixa player, inimigosFase1[2], inimigosFase2[2], saidaFase01, voltaFase01;
+caixa player, inimigosFase1[2], inimigosFase2[2], inimigosFase3[2], saidaFase01, voltaFase01, saidaFase02, voltaFase02;
 
 ALLEGRO_MONITOR_INFO info;
 
@@ -44,7 +45,7 @@ ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
-ALLEGRO_BITMAP* fundo_dois = NULL;
+//ALLEGRO_BITMAP* fundo_dois = NULL;
 ALLEGRO_BITMAP* fundoBatalha = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -70,6 +71,9 @@ ALLEGRO_FONT* subtracaoBatalha = NULL;
 ALLEGRO_FONT* phantasomaBatalha = NULL;
 ALLEGRO_FONT* fonteVida = NULL;
 ALLEGRO_TIMER* fundoItem = NULL;
+
+ALLEGRO_BITMAP* ultimoFundo = NULL;
+ALLEGRO_BITMAP* boss = NULL;
 
 void error_msg(char* text) {
     al_show_native_message_box(janela, "ERRO",
@@ -237,6 +241,32 @@ int inicializar(int fase) {
         //usa a cor rosa como transparencia
         al_convert_mask_to_alpha(phantasoma, al_map_rgb(255, 0, 255));
     }
+    else if (fase == 3) {
+        //Inicia a imagem de fundo
+        ultimoFundo = al_load_bitmap("cenario/mapa_base_montanha.bmp");
+        if (!ultimoFundo) {
+            error_msg("Falha ao carregar fundo");
+            al_destroy_timer(timer);
+            al_destroy_display(janela);
+            al_destroy_event_queue(fila_eventos);
+            al_destroy_bitmap(direita);
+            al_destroy_bitmap(esquerda);
+            al_destroy_bitmap(cima);
+            al_destroy_bitmap(baixo);
+            return 0;
+        }
+
+        boss = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
+        if (!boss) {
+            error_msg("Falha ao carregar sprites inimigo baixo");
+            al_destroy_timer(timer);
+            al_destroy_display(janela);
+            al_destroy_event_queue(fila_eventos);
+            return 0;
+        }
+        //usa a cor rosa como transparencia
+        al_convert_mask_to_alpha(boss, al_map_rgb(255, 0, 255));
+    }
 
     //Inicia a imagem para a movimentação do personagem para a Direita
     direita = al_load_bitmap("sprites/movimento_direita.bmp");
@@ -328,12 +358,7 @@ int colidiu(caixa box1, caixa box2) {
 int deletaInimgo(caixa* inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
-    if (fase_atual == 1) {
-        fase_um();
-    }
-    else if (fase_atual == 2) {
-        fase_dois();
-    }
+    jogo();
 
     return 0;
 }
@@ -373,6 +398,31 @@ int* sorteioNumeros() {
 
         return vetor2;
     }
+    else if (fase_atual == 3) {
+        static int vetor3[2];
+        int sair = 0;
+        int resultado;
+
+        do {
+            for (int i = 0; i < 2; i++) {
+                vetor3[i] = rand() % 100+1;
+            }
+
+            resultado = vetor3[0] / vetor3[1];
+
+            if (vetor3[0] % vetor3[1] == 0) {
+                if (resultado >= 0 && resultado <= 9) {
+                    sair = 1;
+                }
+            }
+            else {
+                sair = 0;
+            }
+
+        } while (!sair);
+
+        return vetor3;
+    }
 }
 
 int resultadoCalculo2(int num1, int num2, int num3) {
@@ -383,9 +433,23 @@ int resultadoCalculo2(int num1, int num2, int num3) {
 }
 
 int resultadoCalculo(int num1, int num2) {
-    int resultado = num1 - num2;
-    printf("\n%d", resultado);
-    return resultado;
+    if (fase_atual == 1) {
+        int resultado = num1 - num2;
+        printf("\n%d", resultado);
+        return resultado;
+    }
+    else if (fase_atual == 3) {
+        int resultado = num1 / num2;
+        if (num1 % num2 == 0) {
+            if (resultado >= 0 && resultado <= 9) {
+                return resultado;
+            }
+        }
+        else {
+            sorteioNumeros();
+        }
+    }
+    
 }
 
 void acertou() {
@@ -557,6 +621,9 @@ int calculadora() {
     }
     else if (fase_atual == 2) {
         resultado = resultadoCalculo2(num1, num2, num3);
+    }
+    else if (fase_atual == 3) {
+        resultado = resultadoCalculo(num1, num2);
     }
     
     while (!menuConfirmar) {
@@ -837,6 +904,9 @@ int calculadora() {
         }
         else if (fase_atual == 2) {
             al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d + %d - %d", num1, num2, num3);
+        }
+        else if (fase_atual == 3) {
+            al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d / %d", num1, num2);
         }
         
         al_draw_bitmap(zero, 350, 500, 0);
@@ -1223,10 +1293,15 @@ int menuBatalha(void) {
                     evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
                     player.x = 300; player.y = 300;
                     destroyMenuBatalha();
-                    if (fase_atual == 1)
-                        fase_um();
-                    else if (fase_atual == 2)
-                        fase_dois();
+                    //if (fase_atual == 1) {
+                    //    //fase_atual = 1;
+                    //    jogo();
+                    //}
+                    //else if (fase_atual == 2) {
+                    //    //fase_atual = 2;
+                    //    jogo();
+                    //} 
+                    jogo();
                 }
             }
         }
@@ -1238,11 +1313,20 @@ int menuBatalha(void) {
         }else if (fase_atual == 2) {
             al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "Phatasoma: %d", vidaInimigo);
         }
+        else if (fase_atual == 3) {
+            al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "Final Boss: %d", vidaInimigo);
+        }
         
         al_draw_bitmap(calculitoBatalha, 100, 290, 0);
         if (inimigoAtual == 1) {
             al_draw_bitmap(subtracaoBatalha, 460, 80, 0);
+        }/*else if(inimigoAtual == 2) {
+            al_draw_bitmap(NULL, 460, 80, 0);
         }
+        else if (inimigoAtual == 3) {
+            al_draw_bitmap(boss, 460, 80, 0);
+        }*/
+
         al_draw_bitmap(atacar, 50, 500, 0);
         al_draw_bitmap(item, 300, 500, 0);
         al_draw_bitmap(fugir, 550, 500, 0);
@@ -1272,6 +1356,10 @@ int destroyJogo(int fase) {
         al_destroy_bitmap(phantasoma);
         al_destroy_bitmap(caverna);
     }
+    else if (fase == 3) {
+        al_destroy_bitmap(boss);
+        al_destroy_bitmap(ultimoFundo);
+    }
 
     al_destroy_font(fonte);
     al_destroy_bitmap(direita);
@@ -1284,7 +1372,7 @@ int destroyJogo(int fase) {
     al_destroy_event_queue(fila_eventos);
 }
 
-int fase_um(void) {
+int jogo() {
     int i;
     int tecla = 0;
     //define quando a tela sera atualizada
@@ -1306,84 +1394,293 @@ int fase_um(void) {
     //posicao X Y da janela em que sera mostrado o sprite
     int regiao_x_folha = 0, regiao_y_folha = 0;
     int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
-    vidaInimigo = 3, fase_atual = 1;
 
-    if (start == 0) {
-        //inicialização do player
-        player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+    if (fase_atual == 1) {
+        vidaInimigo = 3;
+        if (start == 0) {
+            //inicialização do player
+            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
 
-        //inicialização do inimigo 1
-        inimigosFase1[0].x = 600; inimigosFase1[0].y = 200;
-        inimigosFase1[0].lim_y_1 = 200; inimigosFase1[0].lim_y_2 = 400;
-        inimigosFase1[0].direcao_x = 0; inimigosFase1[0].direcao_y = 3;
+            //inicialização do inimigo 1
+            inimigosFase1[0].x = 600; inimigosFase1[0].y = 200;
+            inimigosFase1[0].lim_y_1 = 200; inimigosFase1[0].lim_y_2 = 400;
+            inimigosFase1[0].direcao_x = 0; inimigosFase1[0].direcao_y = 3;
 
-        //inicializacao do inimigo 2
-        inimigosFase1[1].x = 200; inimigosFase1[1].y = 100;
-        inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
-        inimigosFase1[1].direcao_x = 3; inimigosFase1[1].direcao_y = 0;
+            //inicializacao do inimigo 2
+            inimigosFase1[1].x = 200; inimigosFase1[1].y = 100;
+            inimigosFase1[1].lim_x_1 = 200; inimigosFase1[1].lim_x_2 = 400;
+            inimigosFase1[1].direcao_x = 3; inimigosFase1[1].direcao_y = 0;
 
-        //inicialização da saida
-        saidaFase01.x = 400; saidaFase01.y = -100;
+            //inicialização da saida
+            saidaFase01.x = 400; saidaFase01.y = -100;
 
-        start = 1;
+            start = 1;
+        }
     }
+    else if(fase_atual == 2){
+        vidaInimigo = 5;
 
+        if (start_dois == 0) {
+            //inicialização do player
+            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+
+            //inicialização do inimigo 1
+            inimigosFase2[0].x = 600; inimigosFase2[0].y = 200;
+            inimigosFase2[0].lim_y_1 = 200; inimigosFase2[0].lim_y_2 = 400;
+            inimigosFase2[0].direcao_x = 0; inimigosFase2[0].direcao_y = 3;
+
+            //inicializacao do inimigo 2
+            inimigosFase2[1].x = 200; inimigosFase2[1].y = 100;
+            inimigosFase2[1].lim_x_1 = 200; inimigosFase2[1].lim_x_2 = 400;
+            inimigosFase2[1].direcao_x = 3; inimigosFase2[1].direcao_y = 0;
+
+            saidaFase02.x = 400; saidaFase02.y = -100;
+            //inicialização da saida
+            voltaFase01.x = 300; voltaFase01.y = 590;
+
+            start_dois = 1;
+        }
+    }
+    else if (fase_atual == 3) {
+        vidaInimigo = 3;
+
+        if (start_tres == 0) {
+            //inicialização do player
+            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+
+            //inicialização do inimigo 1
+            inimigosFase3[0].x = 600; inimigosFase3[0].y = 200;
+            inimigosFase3[0].lim_y_1 = 200; inimigosFase3[0].lim_y_2 = 400;
+            inimigosFase3[0].direcao_x = 0; inimigosFase3[0].direcao_y = 3;
+
+            //inicializacao do inimigo 2
+            inimigosFase3[1].x = 200; inimigosFase3[1].y = 100;
+            inimigosFase3[1].lim_x_1 = 200; inimigosFase3[1].lim_x_2 = 400;
+            inimigosFase3[1].direcao_x = 3; inimigosFase3[1].direcao_y = 0;
+
+            saidaFase02.x = 400; saidaFase02.y = -100;
+            //inicialização da saida
+            voltaFase02.x = 300; voltaFase02.y = 590;
+
+            start_tres = 1;
+        }
+    }
+    
     if (!inicializar(fase_atual)) {
         return -1;
     }
 
     while (!sair) {
-        // Pegar as teclas digitadas
         ALLEGRO_EVENT evento;
         al_wait_for_event(fila_eventos, &evento);
-
-        //fila de inimigos
-        for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
-            //quando colidi com o inimigo
-            if (colidiu(player, inimigosFase1[i])) {
-                ultimoColidido = &inimigosFase1[i];
-                inimigoAtual = &inimigosFase1[i];
-                if (inimigoAtual == &inimigosFase1[i]) {
-                    inimigoAtual = 1;
+        
+        if (fase_atual == 1) {
+            //fila de inimigos
+            for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+                //quando colidi com o inimigo
+                if (colidiu(player, inimigosFase1[i])) {
+                    ultimoColidido = &inimigosFase1[i];
+                    inimigoAtual = &inimigosFase1[i];
+                    if (inimigoAtual == &inimigosFase1[i]) {
+                        inimigoAtual = 1;
+                    }
+                    destroyJogo(fase_atual);
+                    menuBatalha();
+                    return 0;
                 }
+                //quando não colidi o inimigo
+                else {
+                    //printf("Nao colidiu \n");
+                }
+            }
+
+            //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
+            if (colidiu(player, saidaFase01) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
                 destroyJogo(fase_atual);
-                menuBatalha();
+                player.x = 300; player.y = 400;
+                fase_atual = 2;
+                jogo();
+            }
+
+
+            //movimentacao dos inimigos
+            if (evento.type == ALLEGRO_EVENT_TIMER) {
+                for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+
+                    inimigosFase1[i].x += inimigosFase1[i].direcao_x;
+                    inimigosFase1[i].y += inimigosFase1[i].direcao_y;
+
+                    //se passou das bordas, inverte a direcao
+                    if (inimigosFase1[i].x <= inimigosFase1[i].lim_x_1 ||
+                        inimigosFase1[i].x >= inimigosFase1[i].lim_x_2) {
+                        inimigosFase1[i].direcao_x *= -1;
+                    }
+
+                    if (inimigosFase1[i].y <= inimigosFase1[i].lim_y_1 ||
+                        inimigosFase1[i].y >= inimigosFase1[i].lim_y_2) {
+                        inimigosFase1[i].direcao_y *= -1;
+                    }
+
+                }
+                desenha = 1;
+            }
+        }
+        else if (fase_atual == 2) {
+            //fila de inimigos
+            for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
+                //quando colidi com o inimigo
+                if (colidiu(player, inimigosFase2[i])) {
+                    ultimoColidido = &inimigosFase2[i];
+                    inimigoAtual = 2;
+                    destroyJogo(fase_atual);
+                    menuBatalha();
+                    return 0;
+                }
+                //quando não colidi o inimigo
+                else {
+                    //printf("Nao colidiu \n");
+                }
+            }
+
+            //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
+            if (colidiu(player, voltaFase01)) {
+                destroyJogo(fase_atual);
+                player.x = 350; player.y = 100;
+                fase_atual = 1;
+                jogo();
+                //printf("Passou");
                 return 0;
             }
-            //quando não colidi o inimigo
-            else {
-                //printf("Nao colidiu \n");
+            //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
+            if (colidiu(player, saidaFase02) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
+                destroyJogo(fase_atual);
+                player.x = 300; player.y = 400;
+                fase_atual = 3;
+                jogo();
+            }
+
+
+
+            //movimentacao dos inimigos
+            if (evento.type == ALLEGRO_EVENT_TIMER) {
+                for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
+
+                    inimigosFase2[i].x += inimigosFase2[i].direcao_x;
+                    inimigosFase2[i].y += inimigosFase2[i].direcao_y;
+
+                    //se passou das bordas, inverte a direcao
+                    if (inimigosFase2[i].x <= inimigosFase2[i].lim_x_1 ||
+                        inimigosFase2[i].x >= inimigosFase2[i].lim_x_2) {
+                        inimigosFase2[i].direcao_x *= -1;
+                    }
+
+                    if (inimigosFase2[i].y <= inimigosFase2[i].lim_y_1 ||
+                        inimigosFase2[i].y >= inimigosFase2[i].lim_y_2) {
+                        inimigosFase2[i].direcao_y *= -1;
+                    }
+
+                }
+                desenha = 1;
+            }
+        }
+        else if (fase_atual == 3) {
+            for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
+                //quando colidi com o inimigo
+                if (colidiu(player, inimigosFase3[i])) {
+                    ultimoColidido = &inimigosFase3[i];
+                    inimigoAtual = &inimigosFase3[i];
+                    if (inimigoAtual == &inimigosFase3[i]) {
+                        inimigoAtual = 3;
+                    }
+                    destroyJogo(fase_atual);
+                    menuBatalha();
+                    return 0;
+                }
+                //quando não colidi o inimigo
+                else {
+                    //printf("Nao colidiu \n");
+                }
+            }
+
+            //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
+            if (colidiu(player, voltaFase02)) {
+                destroyJogo(fase_atual);
+                player.x = 350; player.y = 100;
+                fase_atual = 2;
+                jogo();
+                //printf("Passou");
+                return 0;
+            }
+
+            //movimentacao dos inimigos
+            if (evento.type == ALLEGRO_EVENT_TIMER) {
+                for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
+
+                    inimigosFase3[i].x += inimigosFase3[i].direcao_x;
+                    inimigosFase3[i].y += inimigosFase3[i].direcao_y;
+
+                    //se passou das bordas, inverte a direcao
+                    if (inimigosFase3[i].x <= inimigosFase3[i].lim_x_1 ||
+                        inimigosFase3[i].x >= inimigosFase3[i].lim_x_2) {
+                        inimigosFase3[i].direcao_x *= -1;
+                    }
+
+                    if (inimigosFase3[i].y <= inimigosFase3[i].lim_y_1 ||
+                        inimigosFase3[i].y >= inimigosFase3[i].lim_y_2) {
+                        inimigosFase3[i].direcao_y *= -1;
+                    }
+
+                }
+                desenha = 1;
             }
         }
 
-        //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
-        if (colidiu(player, saidaFase01) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
-            destroyJogo(fase_atual);
-            player.x = 300; player.y = 400;
-            fase_dois();
-        }
-
-
-        //movimentacao dos inimigos
         if (evento.type == ALLEGRO_EVENT_TIMER) {
-            for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+            //a cada disparo do timer, incrementa cont_frames
+            cont_frames++;
 
-                inimigosFase1[i].x += inimigosFase1[i].direcao_x;
-                inimigosFase1[i].y += inimigosFase1[i].direcao_y;
-
-                //se passou das bordas, inverte a direcao
-                if (inimigosFase1[i].x <= inimigosFase1[i].lim_x_1 ||
-                    inimigosFase1[i].x >= inimigosFase1[i].lim_x_2) {
-                    inimigosFase1[i].direcao_x *= -1;
+            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
+            if (cont_frames >= frames_sprite) {
+                //reseta cont_frames
+                cont_frames = 0;
+                //incrementa a coluna atual, para mostrar o proximo sprite
+                coluna_atual++;
+                //se coluna atual passou da ultima coluna
+                if (coluna_atual >= colunas_folha) {
+                    //volta pra coluna inicial
+                    coluna_atual = 0;
+                    //incrementa a linha, se passar da ultima, volta pra primeira
+                    linha_atual = (linha_atual + 1) % linhas_folha;
+                    //calcula a posicao Y da folha que sera mostrada
+                    regiao_y_folha = linha_atual * altura_sprite;
                 }
-
-                if (inimigosFase1[i].y <= inimigosFase1[i].lim_y_1 ||
-                    inimigosFase1[i].y >= inimigosFase1[i].lim_y_2) {
-                    inimigosFase1[i].direcao_y *= -1;
-                }
-
+                //calcula a regiao X da folha que sera mostrada
+                regiao_x_folha = coluna_atual * largura_sprite;
             }
-            desenha = 1;
+        }
+
+        //Loop de movimentacao do inimigo
+        if (evento.type == ALLEGRO_EVENT_TIMER) {
+            //a cada disparo do timer, incrementa cont_frames
+            cont_framesI++;
+            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
+            if (cont_framesI >= frames_spriteI) {
+                //reseta cont_frames
+                cont_framesI = 0;
+                //incrementa a coluna atual, para mostrar o proximo sprite
+                coluna_atualI++;
+                //se coluna atual passou da ultima coluna
+                if (coluna_atualI >= colunas_folhaI) {
+                    //volta pra coluna inicial
+                    coluna_atualI = 0;
+                    //incrementa a linha, se passar da ultima, volta pra primeira
+                    linha_atualI = (linha_atualI + 1) % linhas_folhaI;
+                    //calcula a posicao Y da folha que sera mostrada
+                    regiao_y_folhaI = linha_atualI * altura_spriteI;
+                }
+                //calcula a regiao X da folha que sera mostrada
+                regiao_x_folhaI = coluna_atualI * largura_spriteI;
+            }
         }
 
         if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
@@ -1448,59 +1745,18 @@ int fase_um(void) {
             desenha = 1;
         }
 
-
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            //a cada disparo do timer, incrementa cont_frames
-            cont_frames++;
-
-            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
-            if (cont_frames >= frames_sprite) {
-                //reseta cont_frames
-                cont_frames = 0;
-                //incrementa a coluna atual, para mostrar o proximo sprite
-                coluna_atual++;
-                //se coluna atual passou da ultima coluna
-                if (coluna_atual >= colunas_folha) {
-                    //volta pra coluna inicial
-                    coluna_atual = 0;
-                    //incrementa a linha, se passar da ultima, volta pra primeira
-                    linha_atual = (linha_atual + 1) % linhas_folha;
-                    //calcula a posicao Y da folha que sera mostrada
-                    regiao_y_folha = linha_atual * altura_sprite;
-                }
-                //calcula a regiao X da folha que sera mostrada
-                regiao_x_folha = coluna_atual * largura_sprite;
-            }
-        }
-
-        //Loop de movimentacao do inimigo
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            //a cada disparo do timer, incrementa cont_frames
-            cont_framesI++;
-            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
-            if (cont_framesI >= frames_spriteI) {
-                //reseta cont_frames
-                cont_framesI = 0;
-                //incrementa a coluna atual, para mostrar o proximo sprite
-                coluna_atualI++;
-                //se coluna atual passou da ultima coluna
-                if (coluna_atualI >= colunas_folhaI) {
-                    //volta pra coluna inicial
-                    coluna_atualI = 0;
-                    //incrementa a linha, se passar da ultima, volta pra primeira
-                    linha_atualI = (linha_atualI + 1) % linhas_folhaI;
-                    //calcula a posicao Y da folha que sera mostrada
-                    regiao_y_folhaI = linha_atualI * altura_spriteI;
-                }
-                //calcula a regiao X da folha que sera mostrada
-                regiao_x_folhaI = coluna_atualI * largura_spriteI;
-            }
-        }
-
         //Desenha a nova posição do Personagem na tela
         if (desenha && al_is_event_queue_empty(fila_eventos)) {
 
-            al_draw_bitmap_region(fundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+            if (fase_atual == 1) {
+                al_draw_bitmap_region(fundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+            }
+            else if (fase_atual == 2) {
+                al_draw_bitmap_region(caverna, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+            }
+            else if (fase_atual == 3) {
+                al_draw_bitmap_region(ultimoFundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+            }
 
             if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 4) {
                 al_draw_bitmap_region(direita, regiao_x_folha,
@@ -1524,293 +1780,64 @@ int fase_um(void) {
             }
 
             //desenha os inimigos
-            for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
+            if (fase_atual == 1) {
+                for (i = 0; i < (int)(sizeof(inimigosFase1) / sizeof(inimigosFase1[0])); i++) {
 
-                if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x > 0) {
-                    al_draw_bitmap_region(inimigo_subtracao_direita, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
-                }
-                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x < 0) {
-                    al_draw_bitmap_region(inimigo_subtracao_esquerda, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
-                }
-                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y > 0) {
-                    al_draw_bitmap_region(inimigo_subtracao, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
-                }
-                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y < 0) {
-                    al_draw_bitmap_region(inimigo_subtracao_costas, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
-                }
+                    if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x > 0) {
+                        al_draw_bitmap_region(inimigo_subtracao_direita, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                    }
+                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_x < 0) {
+                        al_draw_bitmap_region(inimigo_subtracao_esquerda, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                    }
+                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y > 0) {
+                        al_draw_bitmap_region(inimigo_subtracao, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                    }
+                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase1[i].direcao_y < 0) {
+                        al_draw_bitmap_region(inimigo_subtracao_costas, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase1[i].x, inimigosFase1[i].y, 0);
+                    }
 
+                }
+                al_flip_display();
+                desenha = 0;
             }
-            al_flip_display();
-            desenha = 0;
+            else if (fase_atual == 2) {
+                for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
+
+                    if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase2[i].direcao_x > 0 || inimigosFase2[i].direcao_x < 0) {
+                        al_draw_bitmap_region(phantasoma, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase2[i].x, inimigosFase2[i].y, 0);
+                    }
+                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase2[i].direcao_y > 0 || inimigosFase2[i].direcao_y < 0) {
+                        al_draw_bitmap_region(phantasoma, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase2[i].x, inimigosFase2[i].y, 0);
+                    }
+                }
+                al_flip_display();
+                desenha = 0;
+            }
+            else if (fase_atual == 3) {
+                for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
+
+                    if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_x > 0 || inimigosFase3[i].direcao_x < 0) {
+                        al_draw_bitmap_region(boss, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase3[i].x, inimigosFase3[i].y, 0);
+                    }
+                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_y > 0 || inimigosFase3[i].direcao_y < 0) {
+                        al_draw_bitmap_region(boss, regiao_x_folha,
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase3[i].x, inimigosFase3[i].y, 0);
+                    }
+                }
+                al_flip_display();
+                desenha = 0;
+            }
         }
     }
 
     destroyJogo(fase_atual);
-
-    return 0;
-}
-
-int fase_dois(void) {
-    vidaInimigo = 5;
-    int i;
-    int tecla = 0;
-    //define quando a tela sera atualizada
-    int desenha = 1;
-    //quando o loop principal deve encerrar
-    int sair = 0;
-    //largura e altura de cada sprite dentro da folha
-    int altura_sprite = 170, largura_sprite = 160;
-    int altura_spriteI = 160, largura_spriteI = 160;
-    //quantos sprites tem em cada linha da folha, e a atualmente mostrada
-    int colunas_folha = 3, coluna_atual = 0;
-    int colunas_folhaI = 3, coluna_atualI = 0;
-    //quantos sprites tem em cada coluna da folha, e a atualmente mostrada
-    int linha_atual = 0, linhas_folha = 2;
-    int linha_atualI = 0, linhas_folhaI = 2;
-    //quantos frames devem se passar para atualizar para o proximo sprite
-    int frames_sprite = 6, cont_frames = 0;
-    int frames_spriteI = 6, cont_framesI = 0;
-    //posicao X Y da janela em que sera mostrado o sprite
-    int regiao_x_folha = 0, regiao_y_folha = 0;
-    int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
-    vidaInimigo = 5, fase_atual = 2;
-
-    if (start_dois == 0) {
-        //inicialização do player
-        player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
-
-        //inicialização do inimigo 1
-        inimigosFase2[0].x = 600; inimigosFase2[0].y = 200;
-        inimigosFase2[0].lim_y_1 = 200; inimigosFase2[0].lim_y_2 = 400;
-        inimigosFase2[0].direcao_x = 0; inimigosFase2[0].direcao_y = 3;
-
-        //inicializacao do inimigo 2
-        inimigosFase2[1].x = 200; inimigosFase2[1].y = 100;
-        inimigosFase2[1].lim_x_1 = 200; inimigosFase2[1].lim_x_2 = 400;
-        inimigosFase2[1].direcao_x = 3; inimigosFase2[1].direcao_y = 0;
-
-
-        //inicialização da saida
-        voltaFase01.x = 300; voltaFase01.y = 590;
-
-        start_dois = 1;
-    }
-
-    if (!inicializar(fase_atual)) {
-        return -1;
-    }
-
-    while (!sair) {
-        // Pegar as teclas digitadas
-        ALLEGRO_EVENT evento;
-        al_wait_for_event(fila_eventos, &evento);
-
-        //fila de inimigos
-        for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
-            //quando colidi com o inimigo
-            if (colidiu(player, inimigosFase2[i])) {
-                ultimoColidido = &inimigosFase2[i];
-                inimigoAtual = 2;
-                destroyJogo(fase_atual);
-                menuBatalha();
-                return 0;
-            }
-            //quando não colidi o inimigo
-            else {
-                //printf("Nao colidiu \n");
-            }
-        }
-
-        //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
-        if (colidiu(player, voltaFase01)) {
-            destroyJogo(fase_atual);
-            player.x = 400; player.y = 100;
-            fase_um();
-            //printf("Passou");
-            return 0;
-        }
-
-
-        //movimentacao dos inimigos
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
-
-                inimigosFase2[i].x += inimigosFase2[i].direcao_x;
-                inimigosFase2[i].y += inimigosFase2[i].direcao_y;
-
-                //se passou das bordas, inverte a direcao
-                if (inimigosFase2[i].x <= inimigosFase2[i].lim_x_1 ||
-                    inimigosFase2[i].x >= inimigosFase2[i].lim_x_2) {
-                    inimigosFase2[i].direcao_x *= -1;
-                }
-
-                if (inimigosFase2[i].y <= inimigosFase2[i].lim_y_1 ||
-                    inimigosFase2[i].y >= inimigosFase2[i].lim_y_2) {
-                    inimigosFase2[i].direcao_y *= -1;
-                }
-
-            }
-            desenha = 1;
-        }
-
-        if (evento.type == ALLEGRO_EVENT_KEY_DOWN) {
-            switch (evento.keyboard.keycode) {
-            case ALLEGRO_KEY_UP:
-                tecla = 1;
-                break;
-            case ALLEGRO_KEY_DOWN:
-                tecla = 2;
-                break;
-            case ALLEGRO_KEY_LEFT:
-                tecla = 3;
-                break;
-            case ALLEGRO_KEY_RIGHT:
-                tecla = 4;
-                break;
-            }
-        }
-        else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
-            tecla = 5;
-        }
-        else if (evento.type == ALLEGRO_EVENT_DISPLAY_CLOSE) {
-            sair = 1;
-        }
-
-        // Estrutura que realiza a movimentação do Personagem
-        if (tecla) {
-            al_clear_to_color(al_map_rgb(255, 255, 255));
-            switch (tecla) {
-            case 1:
-                //colisão de cima
-                if (player.y >= 5) {
-                    player.y -= player.direcao_y;
-                    break;
-                }
-                break;
-            case 2:
-                //colisão de baixo
-                if (player.y <= ALTURA_TELA - 180) {
-                    player.y += player.direcao_y;
-                    break;
-                }
-                break;
-            case 3:
-                //colisão da esquerda
-                if (player.x >= 80) {
-                    player.x -= player.direcao_x;
-                    break;
-                }
-                break;
-            case 4:
-                //colisão da direita
-                if (player.x <= LARGURA_TELA - 130) {
-                    player.x += player.direcao_x;
-                    break;
-                }
-                break;
-            }
-            desenha = 1;
-        }
-
-
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            //a cada disparo do timer, incrementa cont_frames
-            cont_frames++;
-
-            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
-            if (cont_frames >= frames_sprite) {
-                //reseta cont_frames
-                cont_frames = 0;
-                //incrementa a coluna atual, para mostrar o proximo sprite
-                coluna_atual++;
-                //se coluna atual passou da ultima coluna
-                if (coluna_atual >= colunas_folha) {
-                    //volta pra coluna inicial
-                    coluna_atual = 0;
-                    //incrementa a linha, se passar da ultima, volta pra primeira
-                    linha_atual = (linha_atual + 1) % linhas_folha;
-                    //calcula a posicao Y da folha que sera mostrada
-                    regiao_y_folha = linha_atual * altura_sprite;
-                }
-                //calcula a regiao X da folha que sera mostrada
-                regiao_x_folha = coluna_atual * largura_sprite;
-            }
-        }
-
-        //Loop de movimentacao do inimigo
-        if (evento.type == ALLEGRO_EVENT_TIMER) {
-            //a cada disparo do timer, incrementa cont_frames
-            cont_framesI++;
-            //se alcancou a quantidade de frames que precisa passar para mudar para o proximo sprite
-            if (cont_framesI >= frames_spriteI) {
-                //reseta cont_frames
-                cont_framesI = 0;
-                //incrementa a coluna atual, para mostrar o proximo sprite
-                coluna_atualI++;
-                //se coluna atual passou da ultima coluna
-                if (coluna_atualI >= colunas_folhaI) {
-                    //volta pra coluna inicial
-                    coluna_atualI = 0;
-                    //incrementa a linha, se passar da ultima, volta pra primeira
-                    linha_atualI = (linha_atualI + 1) % linhas_folhaI;
-                    //calcula a posicao Y da folha que sera mostrada
-                    regiao_y_folhaI = linha_atualI * altura_spriteI;
-                }
-                //calcula a regiao X da folha que sera mostrada
-                regiao_x_folhaI = coluna_atualI * largura_spriteI;
-            }
-        }
-
-        //Desenha a nova posição do Personagem na tela
-        if (desenha && al_is_event_queue_empty(fila_eventos)) {
-
-            al_draw_bitmap_region(caverna, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
-
-            if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 4) {
-                al_draw_bitmap_region(direita, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
-            }
-            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 3) {
-                al_draw_bitmap_region(esquerda, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
-            }
-            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 2) {
-                al_draw_bitmap_region(baixo, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
-            }
-            else if (desenha && al_is_event_queue_empty(fila_eventos) && tecla == 1) {
-                al_draw_bitmap_region(cima, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
-            }
-            else {
-                al_draw_bitmap_region(parado, regiao_x_folha,
-                    regiao_y_folha, largura_sprite, altura_sprite, player.x, player.y, 0);
-            }
-
-            //desenha os inimigos
-            for (i = 0; i < (int)(sizeof(inimigosFase2) / sizeof(inimigosFase2[0])); i++) {
-
-                if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase2[i].direcao_x > 0 || inimigosFase2[i].direcao_x < 0) {
-                    al_draw_bitmap_region(phantasoma, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase2[i].x, inimigosFase2[i].y, 0);
-                }
-                else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase2[i].direcao_y > 0 || inimigosFase2[i].direcao_y < 0) {
-                    al_draw_bitmap_region(phantasoma, regiao_x_folha,
-                        regiao_y_folha, largura_sprite, altura_sprite, inimigosFase2[i].x, inimigosFase2[i].y, 0);
-                }
-            }
-            al_flip_display();
-            desenha = 0;
-        }
-    }
-
-    destroyJogo(fase_atual);
-
-    return 0;
 }
 
 int destroyTutoDes() {
@@ -2141,7 +2168,8 @@ int menu() {
                     evento.mouse.y >= 150 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 200 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenu();
-                    fase_um();
+                    fase_atual = 1;
+                    jogo();
                 }
 
                 if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
