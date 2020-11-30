@@ -15,12 +15,12 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int VidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0;
+int VidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0;
 //fase01 = 0,
 int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
 //criação das variaveis dos objetos
-caixa player, inimigosFase1[2], inimigosFase2[2], inimigosFase3[2], saidaFase01, voltaFase01, saidaFase02, voltaFase02;
+caixa player, inimigosFase1[2], inimigosFase2[2], inimigosFase3[1], saidaFase01, voltaFase01, saidaFase02, voltaFase02;
 
 ALLEGRO_MONITOR_INFO info;
 
@@ -69,6 +69,7 @@ ALLEGRO_FONT* fonteCalculo = NULL;
 ALLEGRO_FONT* calculitoBatalha = NULL;
 ALLEGRO_FONT* subtracaoBatalha = NULL;
 ALLEGRO_FONT* phantasomaBatalha = NULL;
+ALLEGRO_FONT* bossBatalha = NULL;
 ALLEGRO_FONT* fonteVida = NULL;
 ALLEGRO_TIMER* fundoItem = NULL;
 
@@ -243,7 +244,7 @@ int inicializar(int fase) {
     }
     else if (fase == 3) {
         //Inicia a imagem de fundo
-        ultimoFundo = al_load_bitmap("cenario/mapa_base_montanha.bmp");
+        ultimoFundo = al_load_bitmap("cenario/mapa_fim_montanha.bmp");
         if (!ultimoFundo) {
             error_msg("Falha ao carregar fundo");
             al_destroy_timer(timer);
@@ -256,7 +257,7 @@ int inicializar(int fase) {
             return 0;
         }
 
-        boss = al_load_bitmap("sprites/Subtracao_andando_baixo.bmp");
+        boss = al_load_bitmap("sprites/divisao_flutuando.bmp");
         if (!boss) {
             error_msg("Falha ao carregar sprites inimigo baixo");
             al_destroy_timer(timer);
@@ -1156,6 +1157,8 @@ int destroyMenuBatalha() {
     al_destroy_bitmap(fundoBatalha);
     al_destroy_bitmap(calculitoBatalha);
     al_destroy_bitmap(subtracaoBatalha);
+    al_destroy_bitmap(phantasomaBatalha);
+    al_destroy_bitmap(bossBatalha);
     al_destroy_bitmap(atacar);
     al_destroy_bitmap(item);
     al_destroy_bitmap(fugir);
@@ -1215,6 +1218,22 @@ int menuBatalha(void) {
         return 0;
     }
     al_convert_mask_to_alpha(subtracaoBatalha, al_map_rgb(255, 0, 255));
+
+    phantasomaBatalha = al_load_bitmap("sprites/phantasoma_frente_final.bmp");
+    if (!phantasomaBatalha) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+    al_convert_mask_to_alpha(phantasomaBatalha, al_map_rgb(255, 0, 255));
+
+    bossBatalha = al_load_bitmap("sprites/divisao_frente.bmp");
+    if (!bossBatalha) {
+        error_msg("Falha ao carregar o arquivo de imagem");
+        al_destroy_display(janela);
+        return 0;
+    }
+    al_convert_mask_to_alpha(bossBatalha, al_map_rgb(255, 0, 255));
 
     atacar = al_load_bitmap("sprites/botao_ataque.bmp");
     if (!atacar) {
@@ -1311,7 +1330,7 @@ int menuBatalha(void) {
         if (fase_atual == 1) {
             al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "SubtraCao: %d", vidaInimigo);
         }else if (fase_atual == 2) {
-            al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "Phatasoma: %d", vidaInimigo);
+            al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "Fantasoma: %d", vidaInimigo);
         }
         else if (fase_atual == 3) {
             al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "Final Boss: %d", vidaInimigo);
@@ -1320,12 +1339,12 @@ int menuBatalha(void) {
         al_draw_bitmap(calculitoBatalha, 100, 290, 0);
         if (inimigoAtual == 1) {
             al_draw_bitmap(subtracaoBatalha, 460, 80, 0);
-        }/*else if(inimigoAtual == 2) {
-            al_draw_bitmap(NULL, 460, 80, 0);
+        }else if(inimigoAtual == 2) {
+            al_draw_bitmap(phantasomaBatalha, 460, 80, 0);
         }
         else if (inimigoAtual == 3) {
-            al_draw_bitmap(boss, 460, 80, 0);
-        }*/
+            al_draw_bitmap(bossBatalha, 460, 80, 0);
+        }
 
         al_draw_bitmap(atacar, 50, 500, 0);
         al_draw_bitmap(item, 300, 500, 0);
@@ -1442,7 +1461,7 @@ int jogo() {
         }
     }
     else if (fase_atual == 3) {
-        vidaInimigo = 3;
+        vidaInimigo = 10;
 
         if (start_tres == 0) {
             //inicialização do player
@@ -1458,7 +1477,7 @@ int jogo() {
             inimigosFase3[1].lim_x_1 = 200; inimigosFase3[1].lim_x_2 = 400;
             inimigosFase3[1].direcao_x = 3; inimigosFase3[1].direcao_y = 0;
 
-            saidaFase02.x = 400; saidaFase02.y = -100;
+            saidaFase02.x = 500; saidaFase02.y = -100;
             //inicialização da saida
             voltaFase02.x = 300; voltaFase02.y = 590;
 
@@ -1552,7 +1571,7 @@ int jogo() {
                 return 0;
             }
             //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
-            if (colidiu(player, saidaFase02) && inimigosFase1[0].x == 2000 && inimigosFase1[1].x == 2000) {
+            if (colidiu(player, saidaFase02) && inimigosFase2[0].x == 2000 && inimigosFase2[1].x == 2000) {
                 destroyJogo(fase_atual);
                 player.x = 300; player.y = 400;
                 fase_atual = 3;
@@ -1612,27 +1631,6 @@ int jogo() {
                 return 0;
             }
 
-            //movimentacao dos inimigos
-            if (evento.type == ALLEGRO_EVENT_TIMER) {
-                for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
-
-                    inimigosFase3[i].x += inimigosFase3[i].direcao_x;
-                    inimigosFase3[i].y += inimigosFase3[i].direcao_y;
-
-                    //se passou das bordas, inverte a direcao
-                    if (inimigosFase3[i].x <= inimigosFase3[i].lim_x_1 ||
-                        inimigosFase3[i].x >= inimigosFase3[i].lim_x_2) {
-                        inimigosFase3[i].direcao_x *= -1;
-                    }
-
-                    if (inimigosFase3[i].y <= inimigosFase3[i].lim_y_1 ||
-                        inimigosFase3[i].y >= inimigosFase3[i].lim_y_2) {
-                        inimigosFase3[i].direcao_y *= -1;
-                    }
-
-                }
-                desenha = 1;
-            }
         }
 
         if (evento.type == ALLEGRO_EVENT_TIMER) {
@@ -1824,11 +1822,11 @@ int jogo() {
 
                     if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_x > 0 || inimigosFase3[i].direcao_x < 0) {
                         al_draw_bitmap_region(boss, regiao_x_folha,
-                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase3[i].x, inimigosFase3[i].y, 0);
+                            regiao_y_folha, largura_sprite, altura_sprite, 310, 5, 0);
                     }
                     else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_y > 0 || inimigosFase3[i].direcao_y < 0) {
                         al_draw_bitmap_region(boss, regiao_x_folha,
-                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase3[i].x, inimigosFase3[i].y, 0);
+                            regiao_y_folha, largura_sprite, altura_sprite, 310, 5, 0);
                     }
                 }
                 al_flip_display();
