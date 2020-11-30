@@ -15,7 +15,7 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int VidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0;
+int vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
 //fase01 = 0,
 int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
@@ -359,6 +359,15 @@ int colidiu(caixa box1, caixa box2) {
 int deletaInimgo(caixa* inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
+    if (vidaBoss == 0) {
+        //vidaBoss = 10;
+        //start = 0;
+        //start_dois = 0;
+        //start_tres = 0;
+        //vidaPlayer = 3;
+        //qntPocao = 3;
+        victory();
+    }
     jogo();
 
     return 0;
@@ -384,7 +393,7 @@ int* sorteioNumeros() {
         }
         return vetor;
     }
-    else if (fase_atual == 2) {
+    else if (fase_atual == 2 || (fase_atual == 3 && vidaBoss > 10)) {
         static int vetor2[3];
 
         vetor2[0] = rand() % 7;
@@ -399,7 +408,7 @@ int* sorteioNumeros() {
 
         return vetor2;
     }
-    else if (fase_atual == 3) {
+    else if (fase_atual == 3 && vidaBoss > 5 && vidaBoss <= 10) {
         static int vetor3[2];
         int sair = 0;
         int resultado;
@@ -424,19 +433,60 @@ int* sorteioNumeros() {
 
         return vetor3;
     }
+    else if (fase_atual == 3 && vidaBoss <= 5) {
+        static int vetor4[3];
+        int sair = 0;
+        int resultado, resultadoMult;
+
+        do {
+            vetor4[0] = rand() % 9 + 1;
+            vetor4[1] = rand() % 9 + 1;
+            vetor4[2] = rand() % 100 + 1;
+            resultadoMult = vetor4[0] * vetor4[1];
+            resultado = resultadoMult / vetor4[2];
+
+            if (resultadoMult % vetor4[2] == 0) {
+                if (resultado >= 0 && resultado <= 9) {
+                    sair = 1;
+                }
+            }
+            else {
+                sair = 0;
+            }
+
+        } while (!sair);
+
+        return vetor4;
+    }
 }
 
 int resultadoCalculo2(int num1, int num2, int num3) {
-    int resultado = num1 + num2;
-    resultado = resultado - num3;
-    /*printf("\nFuncao resultadoCalculo2 %d", resultado);*/
-    return resultado;
+    if (fase_atual == 2 || (fase_atual == 3 && vidaBoss > 10)) {
+        int resultado = num1 + num2;
+        printf("\n%d", num1);
+        printf("\n%d", num2);
+        printf("\n%d\n", num3);
+        resultado = resultado - num3;
+        return resultado;
+    }
+    else if (fase_atual == 3 && vidaBoss <= 5) {
+        int resultado = num1 * num2;
+        int resultadoDiv = resultado / num3;
+        if (resultado % num3 == 0) {
+            if (resultadoDiv >= 0 && resultadoDiv <= 9) {
+                return resultadoDiv;
+            }
+        }
+        else {
+            sorteioNumeros();
+        }
+    }
+    
 }
 
 int resultadoCalculo(int num1, int num2) {
     if (fase_atual == 1) {
         int resultado = num1 - num2;
-        printf("\n%d", resultado);
         return resultado;
     }
     else if (fase_atual == 3) {
@@ -454,17 +504,14 @@ int resultadoCalculo(int num1, int num2) {
 }
 
 void acertou() {
+    if (fase_atual == 3) {
+        vidaBoss--;
+    }
     return vidaInimigo -= 1;
 }
 
 int errou() {
-    //char tcaixa[50] = "OLA";
-    //char titulo[100] = "ERROU...";
-    //char texto[200] = "BOA SORTE NA PROXIMA!!";
-    ////mostra a caixa de texto
-    //int r = al_show_native_message_box(NULL, tcaixa, titulo, texto, NULL, ALLEGRO_MESSAGEBOX_QUESTION);
-
-    return VidaPlayer -= 1;
+    return vidaPlayer -= 1;
 
 }
 
@@ -623,8 +670,14 @@ int calculadora() {
     else if (fase_atual == 2) {
         resultado = resultadoCalculo2(num1, num2, num3);
     }
-    else if (fase_atual == 3) {
+    else if (fase_atual == 3 && vidaBoss > 10) {
+        resultado = resultadoCalculo2(num1, num2, num3);
+    }
+    else if (fase_atual == 3 && vidaBoss > 5 && vidaBoss <= 10) {
         resultado = resultadoCalculo(num1, num2);
+    }
+    else if (fase_atual == 3 && vidaBoss <= 5) {
+        resultado = resultadoCalculo2(num1, num2, num3);
     }
     
     while (!menuConfirmar) {
@@ -647,20 +700,18 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
                         deletaInimgo(ultimoColidido);
 
                         return 0;
-
                     }
-
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -676,17 +727,19 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
                         deletaInimgo(ultimoColidido);
                         return 0;
                     }
+
+                    
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -702,11 +755,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -728,11 +781,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -754,11 +807,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -780,11 +833,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -806,11 +859,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -832,11 +885,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -858,11 +911,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -884,11 +937,11 @@ int calculadora() {
 
                     destroyCalculadora();
 
-                    if (VidaPlayer > 0 && vidaInimigo > 0) {
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
                         menuBatalha();
                         return 0;
                     }
-                    else if (VidaPlayer == 0) {
+                    else if (vidaPlayer == 0) {
                         gameOver();
                     }
                     else {
@@ -906,8 +959,14 @@ int calculadora() {
         else if (fase_atual == 2) {
             al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d + %d - %d", num1, num2, num3);
         }
-        else if (fase_atual == 3) {
+        else if (fase_atual == 3 && vidaBoss > 10) {
+            al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d + %d - %d", num1, num2, num3);
+        }
+        else if (fase_atual == 3 && vidaBoss > 5 && vidaBoss <= 10) {
             al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d / %d", num1, num2);
+        }
+        else if (fase_atual == 3 && vidaBoss <= 5) {
+            al_draw_textf(fonteCalculo, al_map_rgb(255, 255, 255), LARGURA_TELA / 2, 80, ALLEGRO_ALIGN_CENTRE, "%d * %d / %d", num1, num2, num3);
         }
         
         al_draw_bitmap(zero, 350, 500, 0);
@@ -999,7 +1058,7 @@ int gameOver(void) {
                     evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyGameOver();
-                    VidaPlayer = 3;
+                    vidaPlayer = 3;
                     start = 0;
                     menu();
                 }
@@ -1021,6 +1080,102 @@ int gameOver(void) {
     }
 
     destroyGameOver();
+
+    return 0;
+}
+
+int destroyVictory() {
+    al_destroy_font(fonte);
+    al_destroy_bitmap(voltarMenu);
+    al_destroy_event_queue(fila_eventos);
+}
+
+int victory(void) {
+    if (!al_init()) {
+        error_msg("Falha ao inicializar a Allegro");
+        return -1;
+    }
+    al_init_font_addon();
+
+    if (!al_init_image_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_image");
+        return -1;
+    }
+
+    if (!al_init_ttf_addon()) {
+        error_msg("Falha ao inicializar add-on allegro_ttf");
+        return -1;
+    }
+
+    fonte = al_load_font("arial.ttf", 64, 0);
+    if (!fonte) {
+        al_destroy_display(janela);
+        error_msg("Falha ao carregar fonte");
+        return -1;
+    }
+
+    if (!al_install_mouse()) {
+        error_msg("Falha ao inicializar o mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
+        error_msg("Falha ao atribuir ponteiro do mouse");
+        al_destroy_display(janela);
+        return -1;
+    }
+
+    voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
+    if (!voltarMenu) {
+        error_msg("Falha ao criar botão de saída");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    fila_eventos = al_create_event_queue();
+    if (!fila_eventos) {
+        error_msg("Falha ao criar fila de eventos");
+        al_destroy_display(janela);
+        return 0;
+    }
+
+    al_register_event_source(fila_eventos, al_get_mouse_event_source());
+
+    int sair = 0;
+
+    while (!sair) {
+        while (!al_is_event_queue_empty(fila_eventos)) {
+            ALLEGRO_EVENT evento;
+            al_wait_for_event(fila_eventos, &evento);
+            if (evento.type == ALLEGRO_EVENT_MOUSE_BUTTON_UP) {
+                if (evento.mouse.x >= 10 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.x <= 210 * (res_x_comp / (float)LARGURA_TELA) &&
+                    evento.mouse.y >= 10 * (res_y_comp / (float)ALTURA_TELA) &&
+                    evento.mouse.y <= 60 * (res_y_comp / (float)ALTURA_TELA)) {
+                    destroyVictory();
+                    vidaPlayer = 3;
+                    start = 0;
+                    menu();
+                }
+            }
+        }
+
+        // Preenchemos a tela com a cor ciza
+        al_clear_to_color(al_map_rgb(45, 45, 45));
+
+        // Texto tutorial
+        al_draw_textf(fonte, al_map_rgb(0, 255, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Voce Ganhou!!!");
+
+        al_set_target_bitmap(voltarMenu);
+
+        al_set_target_bitmap(al_get_backbuffer(janela));
+        al_draw_bitmap(voltarMenu, 10, 10, 0);
+
+        al_flip_display();
+    }
+
+    destroyVictory();
 
     return 0;
 }
@@ -1116,7 +1271,7 @@ int itens() {
                     evento.mouse.y >= 200 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 360 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyItens();
-                    VidaPlayer = 3;
+                    vidaPlayer = 3;
                     qntPocao--;
                     menuBatalha(fase_atual);
                 }
@@ -1292,7 +1447,7 @@ int menuBatalha(void) {
                 if (evento.mouse.x >= 50 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.x <= 250 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
-                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
+                    evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenuBatalha();
                     calculadora();
                 }
@@ -1300,7 +1455,7 @@ int menuBatalha(void) {
                 if (evento.mouse.x >= 300 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
-                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
+                    evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     menuItem = 1;
                     destroyMenuBatalha();
                     itens();
@@ -1309,24 +1464,16 @@ int menuBatalha(void) {
                 if (evento.mouse.x >= 550 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.x <= 750 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
-                    evento.mouse.y <= 565 * (res_y_comp / (float)ALTURA_TELA)) {
+                    evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     player.x = 300; player.y = 300;
                     destroyMenuBatalha();
-                    //if (fase_atual == 1) {
-                    //    //fase_atual = 1;
-                    //    jogo();
-                    //}
-                    //else if (fase_atual == 2) {
-                    //    //fase_atual = 2;
-                    //    jogo();
-                    //} 
                     jogo();
                 }
             }
         }
 
         al_set_target_bitmap(al_get_backbuffer(janela));
-        al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 120, 30, ALLEGRO_ALIGN_CENTRE, "Player: %d", VidaPlayer);
+        al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 120, 30, ALLEGRO_ALIGN_CENTRE, "Player: %d", vidaPlayer);
         if (fase_atual == 1) {
             al_draw_textf(fonteVida, al_map_rgb(255, 255, 255), 700, 30, ALLEGRO_ALIGN_RIGHT, "SubtraCao: %d", vidaInimigo);
         }else if (fase_atual == 2) {
@@ -1453,7 +1600,7 @@ int jogo() {
             inimigosFase2[1].lim_x_1 = 200; inimigosFase2[1].lim_x_2 = 400;
             inimigosFase2[1].direcao_x = 3; inimigosFase2[1].direcao_y = 0;
 
-            saidaFase02.x = 400; saidaFase02.y = -100;
+            saidaFase02.x = 300; saidaFase02.y = -100;
             //inicialização da saida
             voltaFase01.x = 300; voltaFase01.y = 590;
 
@@ -1461,23 +1608,15 @@ int jogo() {
         }
     }
     else if (fase_atual == 3) {
-        vidaInimigo = 10;
+        vidaInimigo = 15;
 
         if (start_tres == 0) {
             //inicialização do player
             player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
 
             //inicialização do inimigo 1
-            inimigosFase3[0].x = 600; inimigosFase3[0].y = 200;
-            inimigosFase3[0].lim_y_1 = 200; inimigosFase3[0].lim_y_2 = 400;
-            inimigosFase3[0].direcao_x = 0; inimigosFase3[0].direcao_y = 3;
+            inimigosFase3[0].x = 325; inimigosFase3[0].y = 50;
 
-            //inicializacao do inimigo 2
-            inimigosFase3[1].x = 200; inimigosFase3[1].y = 100;
-            inimigosFase3[1].lim_x_1 = 200; inimigosFase3[1].lim_x_2 = 400;
-            inimigosFase3[1].direcao_x = 3; inimigosFase3[1].direcao_y = 0;
-
-            saidaFase02.x = 500; saidaFase02.y = -100;
             //inicialização da saida
             voltaFase02.x = 300; voltaFase02.y = 590;
 
@@ -1506,10 +1645,6 @@ int jogo() {
                     destroyJogo(fase_atual);
                     menuBatalha();
                     return 0;
-                }
-                //quando não colidi o inimigo
-                else {
-                    //printf("Nao colidiu \n");
                 }
             }
 
@@ -1550,14 +1685,13 @@ int jogo() {
                 //quando colidi com o inimigo
                 if (colidiu(player, inimigosFase2[i])) {
                     ultimoColidido = &inimigosFase2[i];
-                    inimigoAtual = 2;
+                    inimigoAtual = &inimigosFase2[i];
+                    if (inimigoAtual == &inimigosFase2[i]) {
+                        inimigoAtual = 2;
+                    }
                     destroyJogo(fase_atual);
                     menuBatalha();
                     return 0;
-                }
-                //quando não colidi o inimigo
-                else {
-                    //printf("Nao colidiu \n");
                 }
             }
 
@@ -1570,6 +1704,7 @@ int jogo() {
                 //printf("Passou");
                 return 0;
             }
+
             //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
             if (colidiu(player, saidaFase02) && inimigosFase2[0].x == 2000 && inimigosFase2[1].x == 2000) {
                 destroyJogo(fase_atual);
@@ -1577,8 +1712,6 @@ int jogo() {
                 fase_atual = 3;
                 jogo();
             }
-
-
 
             //movimentacao dos inimigos
             if (evento.type == ALLEGRO_EVENT_TIMER) {
@@ -1603,31 +1736,21 @@ int jogo() {
             }
         }
         else if (fase_atual == 3) {
-            for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
-                //quando colidi com o inimigo
-                if (colidiu(player, inimigosFase3[i])) {
-                    ultimoColidido = &inimigosFase3[i];
-                    inimigoAtual = &inimigosFase3[i];
-                    if (inimigoAtual == &inimigosFase3[i]) {
-                        inimigoAtual = 3;
-                    }
-                    destroyJogo(fase_atual);
-                    menuBatalha();
-                    return 0;
-                }
-                //quando não colidi o inimigo
-                else {
-                    //printf("Nao colidiu \n");
-                }
+            //quando colidi com o inimigo
+            if (colidiu(player, inimigosFase3[0])) {
+                ultimoColidido = &inimigosFase3[0];
+                inimigoAtual = 3;
+                destroyJogo(fase_atual);
+                menuBatalha();
+                return 0;
             }
 
             //if para quando o player matar os dois inimigos e passar pela passagem trocar de fase
             if (colidiu(player, voltaFase02)) {
                 destroyJogo(fase_atual);
-                player.x = 350; player.y = 100;
+                player.x = 300; player.y = 100;
                 fase_atual = 2;
                 jogo();
-                //printf("Passou");
                 return 0;
             }
 
@@ -1695,9 +1818,18 @@ int jogo() {
             case ALLEGRO_KEY_RIGHT:
                 tecla = 4;
                 break;
-                /*case ALLEGRO_KEY_D:
-                    tecla = 5;
-                    break;*/
+            case ALLEGRO_KEY_W:
+                tecla = 1;
+                break;
+            case ALLEGRO_KEY_S:
+                tecla = 2;
+                break;
+            case ALLEGRO_KEY_A:
+                tecla = 3;
+                break;
+            case ALLEGRO_KEY_D:
+                tecla = 4;
+                break;
             }
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
@@ -1818,17 +1950,12 @@ int jogo() {
                 desenha = 0;
             }
             else if (fase_atual == 3) {
-                for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
 
-                    if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_x > 0 || inimigosFase3[i].direcao_x < 0) {
+                if (desenha && al_is_event_queue_empty(fila_eventos)) {
                         al_draw_bitmap_region(boss, regiao_x_folha,
-                            regiao_y_folha, largura_sprite, altura_sprite, 310, 5, 0);
-                    }
-                    else if (desenha && al_is_event_queue_empty(fila_eventos) && inimigosFase3[i].direcao_y > 0 || inimigosFase3[i].direcao_y < 0) {
-                        al_draw_bitmap_region(boss, regiao_x_folha,
-                            regiao_y_folha, largura_sprite, altura_sprite, 310, 5, 0);
-                    }
+                            regiao_y_folha, largura_sprite, altura_sprite, inimigosFase3[0].x, inimigosFase3[0].y, 0);
                 }
+                
                 al_flip_display();
                 desenha = 0;
             }
@@ -1927,10 +2054,10 @@ int tutorial() {
 
         // Texto tutorial
         al_draw_text(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 100, ALLEGRO_ALIGN_CENTRE, "TUTORIAL");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 200, ALLEGRO_ALIGN_CENTRE, "MOVIMENTACAO: W.A.S.D");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250,
-            ALLEGRO_ALIGN_CENTRE, "INTERACAO NA TELA DE COMBATE: A (Direita)");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 300, ALLEGRO_ALIGN_CENTRE, "B(Esquerda) - ENTER(Selecionar)");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 200, ALLEGRO_ALIGN_CENTRE, "MOVIMENTACAO: W.A.S.D ou");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Setas (Cima, Baixo, Esquerda, Direita");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 350, ALLEGRO_ALIGN_CENTRE, "INTERACAO NA TELA DE COMBATE: Mouse");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 400, ALLEGRO_ALIGN_CENTRE, "(Botao Esquedo) para selecionar a acao");
 
         al_set_target_bitmap(voltarMenu);
 
@@ -2152,6 +2279,13 @@ int menu() {
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
+
+    vidaBoss = 15;
+    start = 0;
+    start_dois = 0;
+    start_tres = 0;
+    vidaPlayer = 3;
+    qntPocao = 3;
 
     int sair = 0;
 
