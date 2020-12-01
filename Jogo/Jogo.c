@@ -15,22 +15,21 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
-//fase01 = 0,
+int musicaJogo = 0, vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
 int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
+
 //criação das variaveis dos objetos
 caixa player, inimigosFase1[2], inimigosFase2[2], inimigosFase3[1], saidaFase01, voltaFase01, saidaFase02, voltaFase02;
 
 ALLEGRO_MONITOR_INFO info;
-
 ALLEGRO_DISPLAY* janela = NULL;
 ALLEGRO_EVENT_QUEUE* fila_eventos = NULL;
 ALLEGRO_FONT* fonte = NULL;
-ALLEGRO_FONT* atacar = NULL;
-ALLEGRO_FONT* item = NULL;
-ALLEGRO_FONT* fugir = NULL;
-ALLEGRO_FONT* caverna = NULL;
+ALLEGRO_BITMAP* atacar = NULL;
+ALLEGRO_BITMAP* item = NULL;
+ALLEGRO_BITMAP* fugir = NULL;
+ALLEGRO_BITMAP* caverna = NULL;
 ALLEGRO_TIMER* timer = NULL;
 ALLEGRO_BITMAP* quadrado = NULL;
 ALLEGRO_BITMAP* phantasoma = NULL;
@@ -45,7 +44,6 @@ ALLEGRO_BITMAP* cima = NULL;
 ALLEGRO_BITMAP* baixo = NULL;
 ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
-//ALLEGRO_BITMAP* fundo_dois = NULL;
 ALLEGRO_BITMAP* fundoBatalha = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -55,24 +53,23 @@ ALLEGRO_BITMAP* instrucoes = 0;
 ALLEGRO_BITMAP* menuDesenvolvedores = 0;
 ALLEGRO_BITMAP* voltarMenu = 0;
 ALLEGRO_BITMAP* fonteTitulo = 0;
-ALLEGRO_FONT* zero = NULL;
-ALLEGRO_FONT* um = NULL;
-ALLEGRO_FONT* dois = NULL;
-ALLEGRO_FONT* tres = NULL;
-ALLEGRO_FONT* quatro = NULL;
-ALLEGRO_FONT* cinco = NULL;
-ALLEGRO_FONT* seis = NULL;
-ALLEGRO_FONT* sete = NULL;
-ALLEGRO_FONT* oito = NULL;
-ALLEGRO_FONT* nove = NULL;
-ALLEGRO_FONT* fonteCalculo = NULL;
-ALLEGRO_FONT* calculitoBatalha = NULL;
-ALLEGRO_FONT* subtracaoBatalha = NULL;
-ALLEGRO_FONT* phantasomaBatalha = NULL;
-ALLEGRO_FONT* bossBatalha = NULL;
+ALLEGRO_BITMAP* zero = NULL;
+ALLEGRO_BITMAP* um = NULL;
+ALLEGRO_BITMAP* dois = NULL;
+ALLEGRO_BITMAP* tres = NULL;
+ALLEGRO_BITMAP* quatro = NULL;
+ALLEGRO_BITMAP* cinco = NULL;
+ALLEGRO_BITMAP* seis = NULL;
+ALLEGRO_BITMAP* sete = NULL;
+ALLEGRO_BITMAP* oito = NULL;
+ALLEGRO_BITMAP* nove = NULL;
+ALLEGRO_BITMAP* fonteCalculo = NULL;
+ALLEGRO_BITMAP* calculitoBatalha = NULL;
+ALLEGRO_BITMAP* subtracaoBatalha = NULL;
+ALLEGRO_BITMAP* phantasomaBatalha = NULL;
+ALLEGRO_BITMAP* bossBatalha = NULL;
 ALLEGRO_FONT* fonteVida = NULL;
-ALLEGRO_TIMER* fundoItem = NULL;
-
+ALLEGRO_BITMAP* fundoItem = NULL;
 ALLEGRO_BITMAP* ultimoFundo = NULL;
 ALLEGRO_BITMAP* boss = NULL;
 
@@ -114,11 +111,14 @@ int inicializar(int fase) {
     }
 
     //carrega o stream
-    musica = al_load_audio_stream("victory.mp3", 4, 1024);
-    if (!musica)
-    {
-        error_msg("Audio nao carregado");
-        return 0;
+    if (musicaJogo == 0) {
+        musica = al_load_audio_stream("victory.mp3", 4, 1024);
+        if (!musica)
+        {
+            error_msg("Audio nao carregado");
+            return 0;
+        }
+        musicaJogo = 1;
     }
 
     //liga o stream no mixer
@@ -133,7 +133,7 @@ int inicializar(int fase) {
     // Inicialização do add-on para uso de fontes True Type
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     if (!al_init_image_addon()) {
@@ -360,12 +360,6 @@ int deletaInimgo(caixa* inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
     if (vidaBoss == 0) {
-        //vidaBoss = 10;
-        //start = 0;
-        //start_dois = 0;
-        //start_tres = 0;
-        //vidaPlayer = 3;
-        //qntPocao = 3;
         victory();
     }
     jogo();
@@ -463,9 +457,6 @@ int* sorteioNumeros() {
 int resultadoCalculo2(int num1, int num2, int num3) {
     if (fase_atual == 2 || (fase_atual == 3 && vidaBoss > 10)) {
         int resultado = num1 + num2;
-        printf("\n%d", num1);
-        printf("\n%d", num2);
-        printf("\n%d\n", num3);
         resultado = resultado - num3;
         return resultado;
     }
@@ -512,7 +503,6 @@ void acertou() {
 
 int errou() {
     return vidaPlayer -= 1;
-
 }
 
 int destroyCalculadora() {
@@ -533,18 +523,18 @@ int destroyCalculadora() {
 int calculadora() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonteCalculo = al_load_font("arial.ttf", 58, 0);
@@ -627,13 +617,13 @@ int calculadora() {
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     fila_eventos = al_create_event_queue();
@@ -645,18 +635,7 @@ int calculadora() {
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
-    int menuZero = 0;
-    int menuUm = 0;
-    int menuDois = 0;
-    int menuTres = 0;
-    int menuQuatro = 0;
-    int menuCinco = 0;
-    int menuSeis = 0;
-    int menuSete = 0;
-    int menuOito = 0;
-    int menuNove = 0;
     int menuConfirmar = 0;
-    int menuBackspace = 0;
     int* numeros;
     int num1, num2, num3;
     numeros = sorteioNumeros();
@@ -997,37 +976,37 @@ int destroyGameOver() {
 int gameOver(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 64, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
@@ -1093,37 +1072,37 @@ int destroyVictory() {
 int victory(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 64, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
@@ -1191,18 +1170,18 @@ int destroyItens() {
 int itens() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 48, 0);
@@ -1238,13 +1217,13 @@ int itens() {
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     fila_eventos = al_create_event_queue();
@@ -1260,7 +1239,6 @@ int itens() {
     int menuAtacar = 0;
 
     while (!sair) {
-        //al_clear_to_color(al_map_rgb(0, 0, 0));
         al_draw_bitmap_region(fundoItem, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
@@ -1323,18 +1301,18 @@ int destroyMenuBatalha() {
 int menuBatalha(void) {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 48, 0);
@@ -1414,13 +1392,13 @@ int menuBatalha(void) {
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     fila_eventos = al_create_event_queue();
@@ -1510,7 +1488,6 @@ int menuBatalha(void) {
 }
 
 int destroyJogo(int fase) {
-
     if (fase == 1) {
         al_destroy_bitmap(inimigo_subtracao_costas);
         al_destroy_bitmap(inimigo_subtracao_direita);
@@ -1534,7 +1511,6 @@ int destroyJogo(int fase) {
     al_destroy_bitmap(baixo);
     al_destroy_bitmap(parado);
     al_destroy_timer(timer);
-    al_destroy_audio_stream(musica);
     al_destroy_event_queue(fila_eventos);
 }
 
@@ -1560,12 +1536,13 @@ int jogo() {
     //posicao X Y da janela em que sera mostrado o sprite
     int regiao_x_folha = 0, regiao_y_folha = 0;
     int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
+    player.direcao_x = 2; player.direcao_y = 2;
 
     if (fase_atual == 1) {
         vidaInimigo = 3;
         if (start == 0) {
             //inicialização do player
-            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+            player.x = 300; player.y = 400;
 
             //inicialização do inimigo 1
             inimigosFase1[0].x = 600; inimigosFase1[0].y = 200;
@@ -1588,7 +1565,7 @@ int jogo() {
 
         if (start_dois == 0) {
             //inicialização do player
-            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+            player.x = 300; player.y = 400;
 
             //inicialização do inimigo 1
             inimigosFase2[0].x = 600; inimigosFase2[0].y = 200;
@@ -1612,7 +1589,7 @@ int jogo() {
 
         if (start_tres == 0) {
             //inicialização do player
-            player.x = 300; player.y = 400; player.direcao_x = 3; player.direcao_y = 3;
+            player.x = 300; player.y = 400;
 
             //inicialização do inimigo 1
             inimigosFase3[0].x = 325; inimigosFase3[0].y = 50;
@@ -1642,6 +1619,8 @@ int jogo() {
                     if (inimigoAtual == &inimigosFase1[i]) {
                         inimigoAtual = 1;
                     }
+                    al_destroy_audio_stream(musica);
+                    musicaJogo = 0;
                     destroyJogo(fase_atual);
                     menuBatalha();
                     return 0;
@@ -1689,6 +1668,8 @@ int jogo() {
                     if (inimigoAtual == &inimigosFase2[i]) {
                         inimigoAtual = 2;
                     }
+                    al_destroy_audio_stream(musica);
+                    musicaJogo = 0;
                     destroyJogo(fase_atual);
                     menuBatalha();
                     return 0;
@@ -1740,6 +1721,8 @@ int jogo() {
             if (colidiu(player, inimigosFase3[0])) {
                 ultimoColidido = &inimigosFase3[0];
                 inimigoAtual = 3;
+                al_destroy_audio_stream(musica);
+                musicaJogo = 0;
                 destroyJogo(fase_atual);
                 menuBatalha();
                 return 0;
@@ -1975,44 +1958,44 @@ int destroyTutoDes() {
 int tutorial() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 32, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     fonteTitulo = al_load_font("arial.ttf", 42, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
@@ -2030,7 +2013,6 @@ int tutorial() {
     }
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
-    /*al_register_event_source(fila_eventos, al_get_display_event_source(janela));*/
 
     int sair = 0;
 
@@ -2073,45 +2055,45 @@ int tutorial() {
 int desenvolvedores() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
 
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     fonte = al_load_font("arial.ttf", 32, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     fonteTitulo = al_load_font("arial.ttf", 42, 0);
     if (!fonte) {
         al_destroy_display(janela);
         error_msg("Falha ao carregar fonte");
-        return -1;
+        return 0;
     }
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     voltarMenu = al_load_bitmap("sprites/botao_quit.bmp");
@@ -2179,19 +2161,19 @@ int destroyMenu() {
 int menu() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
-        return -1;
+        return 0;
     }
 
     al_init_font_addon();
 
     if (!al_init_image_addon()) {
         error_msg("Falha ao inicializar add-on allegro_image");
-        return -1;
+        return 0;
     }
 
     if (!al_init_ttf_addon()) {
         error_msg("Falha ao inicializar add-on allegro_ttf");
-        return -1;
+        return 0;
     }
 
     if (comeco == 0) {
@@ -2205,7 +2187,7 @@ int menu() {
         /*janela = al_create_display(LARGURA_TELA, ALTURA_TELA);*/
         if (!janela) {
             error_msg("Falha ao criar janela");
-            return -1;
+            return 0;
         }
         al_set_window_title(janela, "Menu");
 
@@ -2224,19 +2206,19 @@ int menu() {
     if (!imagem) {
         error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_install_mouse()) {
         error_msg("Falha ao inicializar o mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     if (!al_set_system_mouse_cursor(janela, ALLEGRO_SYSTEM_MOUSE_CURSOR_DEFAULT)) {
         error_msg("Falha ao atribuir ponteiro do mouse");
         al_destroy_display(janela);
-        return -1;
+        return 0;
     }
 
     jogar = al_load_bitmap("sprites/botao_jogar.bmp");
