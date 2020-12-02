@@ -1,35 +1,35 @@
 ﻿  Jogo.c
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(139,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(363,16): warning C4013: 'victory' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(365,9): warning C4013: 'jogo' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(501,28): warning C4098: 'acertou': função 'void' retornando um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(509,33): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(540,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(683,36): warning C4013: 'menuBatalha' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(687,33): warning C4013: 'gameOver' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(936,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(939,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(942,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(945,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(948,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1042,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1618,53): warning C4047: '=': 'int' difere em níveis de indireção de 'caixa *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1619,58): warning C4047: '==': 'int' difere em níveis de indireção de 'caixa *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1667,53): warning C4047: '=': 'int' difere em níveis de indireção de 'caixa *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1668,58): warning C4047: '==': 'int' difere em níveis de indireção de 'caixa *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1953,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1982,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(2080,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(476): warning C4715: 'resultadoCalculo2': nem todos os caminhos de controle retornam um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(495): warning C4715: 'resultadoCalculo': nem todos os caminhos de controle retornam um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(455): warning C4715: 'sorteioNumeros': nem todos os caminhos de controle retornam um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(521): warning C4716: 'destroyCalculadora': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(974): warning C4716: 'destroyGameOver': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1070): warning C4716: 'destroyVictory': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1168): warning C4716: 'destroyItens': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1299): warning C4716: 'destroyMenuBatalha': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1515): warning C4716: 'destroyJogo': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1956): warning C4716: 'destroyTutoDes': deve retornar um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(1949): warning C4715: 'jogo': nem todos os caminhos de controle retornam um valor
-C:\Users\andre\Desktop\PI-2\Jogo\Jogo.c(2159): warning C4716: 'destroyMenu': deve retornar um valor
-  Jogo.vcxproj -> C:\Users\andre\Desktop\PI-2\Debug\Jogo.exe
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(141,29): warning C4013: 'al_init_image_addon' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(365,16): warning C4013: 'victory' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(370,9): warning C4013: 'jogo' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(506,28): warning C4098: 'acertou': função 'void' retornando um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(514,33): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(545,52): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(688,36): warning C4013: 'menuBatalha' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(694,33): warning C4013: 'gameOver' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(961,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(964,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(967,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(970,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(973,39): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'const ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1067,25): warning C4013: 'menu' indefinido; assumindo extern retornando int
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1659,53): warning C4047: '=': 'int' difere em níveis de indireção de 'caixa *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1660,58): warning C4047: '==': 'int' difere em níveis de indireção de 'caixa *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1708,53): warning C4047: '=': 'int' difere em níveis de indireção de 'caixa *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1709,58): warning C4047: '==': 'int' difere em níveis de indireção de 'caixa *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1994,32): warning C4133: 'função': tipos incompatíveis - de 'ALLEGRO_BITMAP *' para 'ALLEGRO_FONT *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(2023,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(2121,51): warning C4133: '=': tipos incompatíveis - de 'ALLEGRO_FONT *' para 'ALLEGRO_BITMAP *'
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(481): warning C4715: 'resultadoCalculo2': nem todos os caminhos de controle retornam um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(500): warning C4715: 'resultadoCalculo': nem todos os caminhos de controle retornam um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(460): warning C4715: 'sorteioNumeros': nem todos os caminhos de controle retornam um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(526): warning C4716: 'destroyCalculadora': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(999): warning C4716: 'destroyGameOver': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1096): warning C4716: 'destroyVictory': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1194): warning C4716: 'destroyItens': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1325): warning C4716: 'destroyMenuBatalha': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1556): warning C4716: 'destroyJogo': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1997): warning C4716: 'destroyTutoDes': deve retornar um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(1990): warning C4715: 'jogo': nem todos os caminhos de controle retornam um valor
+C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Jogo\Jogo.c(2200): warning C4716: 'destroyMenu': deve retornar um valor
+  Jogo.vcxproj -> C:\Users\Rafael Ribas\Desktop\SENAC-SEMESTRE2\pi\PI-2\Debug\Jogo.exe

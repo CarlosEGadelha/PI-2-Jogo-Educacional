@@ -15,7 +15,7 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int musicaJogo = 0, vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
+int musicaJogo = 0, musicaBatalha = 0, musicaMenu = 0, vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
 int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
 
@@ -46,6 +46,8 @@ ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_BITMAP* fundoBatalha = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
+ALLEGRO_AUDIO_STREAM* musicaBat = NULL;
+ALLEGRO_AUDIO_STREAM* musica_menu = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
 ALLEGRO_BITMAP* botao_sair = NULL;
 ALLEGRO_BITMAP* jogar = 0;
@@ -362,6 +364,9 @@ int deletaInimgo(caixa* inimigo) {
     if (vidaBoss == 0) {
         victory();
     }
+    //quando o inimigo morrer ele tambem tira a musica de batalha do mixer
+    al_destroy_audio_stream(musicaBat);
+    musicaBatalha = 0;
     jogo();
 
     return 0;
@@ -684,6 +689,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -711,6 +718,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -739,6 +748,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -765,6 +776,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -791,6 +804,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -817,6 +832,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -843,6 +860,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -869,6 +888,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -895,6 +916,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -921,6 +944,8 @@ int calculadora() {
                         return 0;
                     }
                     else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
                         gameOver();
                     }
                     else {
@@ -1043,7 +1068,8 @@ int gameOver(void) {
                 }
             }
         }
-
+        
+        
         // Preenchemos a tela com a cor ciza
         al_clear_to_color(al_map_rgb(45, 45, 45));
 
@@ -1408,6 +1434,18 @@ int menuBatalha(void) {
         return 0;
     }
 
+    //se a musica ja estiver tocando ela nao comecara uma nova por cima e inicia a musica no mixer
+    if (musicaBatalha == 0) {
+        musicaBat = al_load_audio_stream("batalha.mp3", 4, 1024);
+        al_attach_audio_stream_to_mixer(musicaBat, al_get_default_mixer());
+        if (!musica)
+        {
+            error_msg("Audio nao carregado");
+            return 0;
+        }
+        musicaBatalha = 1;
+    }
+
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
     int sair = 0;
@@ -1444,6 +1482,9 @@ int menuBatalha(void) {
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     player.x = 300; player.y = 300;
+
+                    al_destroy_audio_stream(musicaBat);
+                    musicaBatalha = 0;
                     destroyMenuBatalha();
                     jogo();
                 }
@@ -2200,6 +2241,8 @@ int menu() {
         al_use_transform(&transformar);
 
         comeco = 1;
+
+        
     }
 
     imagem = al_load_bitmap("Cenario/Menu.bmp");
@@ -2259,6 +2302,41 @@ int menu() {
         return 0;
     }
 
+    //inicialização do add-on de audio
+    if (!al_install_audio()) {
+        error_msg("Falha ao inicializar o audio");
+        return 0;
+    }
+
+    //addon que da suporte as extensoes de audio
+    if (!al_init_acodec_addon()) {
+        error_msg("Falha ao inicializar o codec de audio");
+        return 0;
+    }
+
+    //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
+    if (!al_reserve_samples(2)) {
+        error_msg("Falha ao reservar amostrar de audio");
+        return 0;
+    }
+
+    //se a musica ja estiver tocando ela nao comecara uma nova por cima e inicia a musica no mixer
+     if (musicaMenu == 0) {
+
+        musica_menu = al_load_audio_stream("menu.mp3", 4, 1024);
+
+        al_attach_audio_stream_to_mixer(musica_menu, al_get_default_mixer());
+        //musica em looping
+        al_set_audio_stream_playmode(musica_menu, ALLEGRO_PLAYMODE_LOOP);
+
+        if (!musica)
+        {
+            error_msg("Audio nao carregado");
+            return 0;
+        }
+        musicaMenu = 1;
+     }
+
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
 
@@ -2282,6 +2360,8 @@ int menu() {
                     evento.mouse.y >= 150 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 200 * (res_y_comp / (float)ALTURA_TELA)) {
                     destroyMenu();
+                    al_destroy_audio_stream(musica_menu);
+                    musicaMenu = 0;
                     fase_atual = 1;
                     jogo();
                 }
