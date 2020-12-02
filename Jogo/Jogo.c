@@ -682,7 +682,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -695,7 +709,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -708,7 +736,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -721,7 +763,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -734,7 +790,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -747,7 +817,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -760,7 +844,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -773,7 +871,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -786,7 +898,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -799,7 +925,21 @@ int calculadora() {
                     else {
                         vidaPlayer -= 1;
                     }
-                    sair = 1;
+                    destroyCalculadora();
+
+                    if (vidaPlayer > 0 && vidaInimigo > 0) {
+                        menuBatalha();
+                        return 0;
+                    }
+                    else if (vidaPlayer == 0) {
+                        al_destroy_audio_stream(musicaBat);
+                        musicaBatalha = 0;
+                        gameOver();
+                    }
+                    else {
+                        deletaInimgo(ultimoColidido);
+                        return 0;
+                    }
                 }
             }
         }
@@ -835,22 +975,7 @@ int calculadora() {
         al_flip_display();
     }
 
-
     destroyCalculadora();
-
-    if (vidaPlayer > 0 && vidaInimigo > 0) {
-        menuBatalha();
-        return 0;
-    }
-    else if (vidaPlayer == 0) {
-        al_destroy_audio_stream(musicaBat);
-        musicaBatalha = 0;
-        gameOver();
-    }
-    else {
-        deletaInimgo(ultimoColidido);
-        return 0;
-    }
 
     return 0;
 }
