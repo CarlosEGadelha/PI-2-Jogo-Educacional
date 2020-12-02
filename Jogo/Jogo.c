@@ -362,13 +362,15 @@ int deletaInimgo(caixa* inimigo) {
     inimigo->x = 2000;
     inimigo->y = 2000;
     if (vidaBoss == 0) {
+        al_destroy_audio_stream(musicaBat);
         victory();
     }
+    else {
+        al_destroy_audio_stream(musicaBat);
+        musicaBatalha = 0;
+        jogo();
+    }
     //quando o inimigo morrer ele tambem tira a musica de batalha do mixer
-    al_destroy_audio_stream(musicaBat);
-    musicaBatalha = 0;
-    jogo();
-
     return 0;
 }
 
@@ -1434,17 +1436,37 @@ int menuBatalha(void) {
         return 0;
     }
 
-    //se a musica ja estiver tocando ela nao comecara uma nova por cima e inicia a musica no mixer
+    //inicialização do add-on de audio
+    if (!al_install_audio()) {
+        error_msg("Falha ao inicializar o audio");
+        return 0;
+    }
+
+    //addon que da suporte as extensoes de audio
+    if (!al_init_acodec_addon()) {
+        error_msg("Falha ao inicializar o codec de audio");
+        return 0;
+    }
+
+    //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
+    if (!al_reserve_samples(2)) {
+        error_msg("Falha ao reservar amostrar de audio");
+        return 0;
+    }
+
+    //carrega o stream
     if (musicaBatalha == 0) {
         musicaBat = al_load_audio_stream("batalha.mp3", 4, 1024);
-        al_attach_audio_stream_to_mixer(musicaBat, al_get_default_mixer());
-        if (!musica)
+        if (!musicaBat)
         {
             error_msg("Audio nao carregado");
             return 0;
         }
         musicaBatalha = 1;
     }
+
+    al_attach_audio_stream_to_mixer(musicaBat, al_get_default_mixer());
+    al_set_audio_stream_playmode(musicaBat, ALLEGRO_PLAYMODE_LOOP);
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
@@ -1472,7 +1494,6 @@ int menuBatalha(void) {
                     evento.mouse.x <= 500 * (res_x_comp / (float)LARGURA_TELA) &&
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
-                    menuItem = 1;
                     destroyMenuBatalha();
                     itens();
                 }
@@ -1482,9 +1503,7 @@ int menuBatalha(void) {
                     evento.mouse.y >= 500 * (res_y_comp / (float)ALTURA_TELA) &&
                     evento.mouse.y <= 550 * (res_y_comp / (float)ALTURA_TELA)) {
                     player.x = 300; player.y = 300;
-
                     al_destroy_audio_stream(musicaBat);
-                    musicaBatalha = 0;
                     destroyMenuBatalha();
                     jogo();
                 }
@@ -1579,6 +1598,8 @@ int jogo() {
     int regiao_x_folhaI = 0, regiao_y_folhaI = 0;
     player.direcao_x = 2; player.direcao_y = 2;
 
+    musicaBatalha = 0;
+
     if (fase_atual == 1) {
         vidaInimigo = 3;
         if (start == 0) {
@@ -1634,6 +1655,8 @@ int jogo() {
 
             //inicialização do inimigo 1
             inimigosFase3[0].x = 325; inimigosFase3[0].y = 50;
+            inimigosFase2[1].lim_x_1 = 335; inimigosFase2[1].lim_x_2 = 60;
+            inimigosFase2[1].direcao_x = 3; inimigosFase2[1].direcao_y = 0;
 
             //inicialização da saida
             voltaFase02.x = 300; voltaFase02.y = 590;
@@ -1778,6 +1801,21 @@ int jogo() {
                 return 0;
             }
 
+            if (evento.type == ALLEGRO_EVENT_TIMER) {
+                for (i = 0; i < (int)(sizeof(inimigosFase3) / sizeof(inimigosFase3[0])); i++) {
+
+                    inimigosFase3[i].x += inimigosFase3[i].direcao_x;
+                    inimigosFase3[i].y += inimigosFase3[i].direcao_y;
+
+                    //se passou das bordas, inverte a direcao
+                    if (inimigosFase3[i].x <= inimigosFase3[i].lim_x_1 ||
+                        inimigosFase3[i].x >= inimigosFase3[i].lim_x_2) {
+                        inimigosFase3[i].direcao_x *= -1;
+                    }
+                }
+                desenha = 1;
+            }
+
         }
 
         if (evento.type == ALLEGRO_EVENT_TIMER) {
@@ -1854,6 +1892,10 @@ int jogo() {
             case ALLEGRO_KEY_D:
                 tecla = 4;
                 break;
+            case ALLEGRO_KEY_ESCAPE:
+                tecla = 6;
+                break;
+               
             }
         }
         else if (evento.type == ALLEGRO_EVENT_KEY_UP) {
@@ -1895,6 +1937,11 @@ int jogo() {
                     break;
                 }
                 break;
+            case 6:
+                al_destroy_audio_stream(musica);
+                destroyJogo(fase_atual);
+                musicaJogo = 0;
+                menu();
             }
             desenha = 1;
         }
@@ -1903,7 +1950,7 @@ int jogo() {
         if (desenha && al_is_event_queue_empty(fila_eventos)) {
 
             if (fase_atual == 1) {
-                al_draw_bitmap_region(fundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
+               al_draw_bitmap_region(fundo, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
             }
             else if (fase_atual == 2) {
                 al_draw_bitmap_region(caverna, 0, 0, LARGURA_TELA, ALTURA_TELA, 0, 0, 0);
@@ -2076,11 +2123,15 @@ int tutorial() {
         al_clear_to_color(al_map_rgb(80, 80, 80));
 
         // Texto tutorial
-        al_draw_text(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 100, ALLEGRO_ALIGN_CENTRE, "TUTORIAL");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 200, ALLEGRO_ALIGN_CENTRE, "MOVIMENTACAO: W.A.S.D ou");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Setas (Cima, Baixo, Esquerda, Direita");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 350, ALLEGRO_ALIGN_CENTRE, "INTERACAO NA TELA DE COMBATE: Mouse");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 400, ALLEGRO_ALIGN_CENTRE, "(Botao Esquedo) para selecionar a acao");
+        al_draw_text(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 50, ALLEGRO_ALIGN_CENTRE, "TUTORIAL");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 150, ALLEGRO_ALIGN_CENTRE, "MOVIMENTACAO: W.A.S.D ou");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 180, ALLEGRO_ALIGN_CENTRE, "Setas (Cima, Baixo, Esquerda, Direita");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "INTERACAO NA TELA DE COMBATE: Mouse");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 280, ALLEGRO_ALIGN_CENTRE, "(Botao Esquedo) para selecionar a acao");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 350, ALLEGRO_ALIGN_CENTRE, "OBS: Caso o jogador decida atacar,");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 390, ALLEGRO_ALIGN_CENTRE, "obrigatoriamente precisara responder");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 460, ALLEGRO_ALIGN_CENTRE, "Aperte ESC durante a fase");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 490, ALLEGRO_ALIGN_CENTRE, "para voltar ao MENU do Jogo");
 
         al_set_target_bitmap(voltarMenu);
 
@@ -2174,10 +2225,10 @@ int desenvolvedores() {
         al_clear_to_color(al_map_rgb(80, 80, 80));
 
         // Texto tutorial
-        al_draw_text(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 100, ALLEGRO_ALIGN_CENTRE, "DESENVOLVEDORES");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 200, ALLEGRO_ALIGN_CENTRE, "Andre Tomio Nakayama");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Carlos Eduardo Gadelha Silva");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 300, ALLEGRO_ALIGN_CENTRE, "Rafael Ribas Albuquerque");
+        al_draw_text(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 150, ALLEGRO_ALIGN_CENTRE, "DESENVOLVEDORES");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Andre Tomio Nakayama");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 300, ALLEGRO_ALIGN_CENTRE, "Carlos Eduardo Gadelha Silva");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 350, ALLEGRO_ALIGN_CENTRE, "Rafael Ribas Albuquerque");
 
         al_set_target_bitmap(voltarMenu);
 
@@ -2241,8 +2292,6 @@ int menu() {
         al_use_transform(&transformar);
 
         comeco = 1;
-
-        
     }
 
     imagem = al_load_bitmap("Cenario/Menu.bmp");
@@ -2302,40 +2351,40 @@ int menu() {
         return 0;
     }
 
-    //inicialização do add-on de audio
-    if (!al_install_audio()) {
-        error_msg("Falha ao inicializar o audio");
-        return 0;
-    }
-
-    //addon que da suporte as extensoes de audio
-    if (!al_init_acodec_addon()) {
-        error_msg("Falha ao inicializar o codec de audio");
-        return 0;
-    }
-
-    //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
-    if (!al_reserve_samples(2)) {
-        error_msg("Falha ao reservar amostrar de audio");
-        return 0;
-    }
-
-    //se a musica ja estiver tocando ela nao comecara uma nova por cima e inicia a musica no mixer
-     if (musicaMenu == 0) {
-
-        musica_menu = al_load_audio_stream("menu.mp3", 4, 1024);
-
-        al_attach_audio_stream_to_mixer(musica_menu, al_get_default_mixer());
-        //musica em looping
-        al_set_audio_stream_playmode(musica_menu, ALLEGRO_PLAYMODE_LOOP);
-
-        if (!musica)
-        {
-            error_msg("Audio nao carregado");
-            return 0;
-        }
-        musicaMenu = 1;
+     //inicialização do add-on de audio
+     if (!al_install_audio()) {
+         error_msg("Falha ao inicializar o audio");
+         return 0;
      }
+
+     //addon que da suporte as extensoes de audio
+     if (!al_init_acodec_addon()) {
+         error_msg("Falha ao inicializar o codec de audio");
+         return 0;
+     }
+
+     //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
+     if (!al_reserve_samples(2)) {
+         error_msg("Falha ao reservar amostrar de audio");
+         return 0;
+     }
+
+     //carrega o stream
+     if (musicaMenu == 0) {
+         musica_menu = al_load_audio_stream("menu.mp3", 4, 1024);
+         if (!musica_menu)
+         {
+             error_msg("Audio nao carregado");
+             return 0;
+         }
+         musicaMenu = 1;
+     }
+
+     //liga o stream no mixer
+     al_attach_audio_stream_to_mixer(musica_menu, al_get_default_mixer());
+
+     //define que o stream vai tocar no modo repeat
+     al_set_audio_stream_playmode(musica_menu, ALLEGRO_PLAYMODE_LOOP);
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
     al_register_event_source(fila_eventos, al_get_display_event_source(janela));
@@ -2403,6 +2452,7 @@ int menu() {
     }
 
     destroyMenu();
+    al_destroy_display(janela);
 
     return 0;
 }
