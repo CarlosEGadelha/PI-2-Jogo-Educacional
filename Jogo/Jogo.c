@@ -15,12 +15,13 @@
 #define ALTURA_TELA 600
 
 typedef struct { int x, y, lim_x_1, lim_y_1, lim_x_2, lim_y_2, direcao_x, direcao_y; } caixa;
-int musicaJogo = 0, musicaBatalha = 0, musicaMenu = 0, vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
-int res_x_comp, res_y_comp;
 caixa* ultimoColidido = NULL;
-
 //criação das variaveis dos objetos
 caixa player, inimigosFase1[2], inimigosFase2[2], inimigosFase3[1], saidaFase01, voltaFase01, saidaFase02, voltaFase02;
+
+int musicaJogo = 0, musicaBatalha = 0, musicaMenu = 0, vidaPlayer = 3, vidaInimigo = 0, start = 0, start_dois = 0, 
+start_tres = 0, fase_atual = 0, qntPocao = 3, comeco = 0, inimigoAtual = 0, vidaBoss = 15;
+int res_x_comp, res_y_comp;
 
 ALLEGRO_MONITOR_INFO info;
 ALLEGRO_DISPLAY* janela = NULL;
@@ -46,6 +47,8 @@ ALLEGRO_BITMAP* parado = NULL;
 ALLEGRO_BITMAP* fundo = NULL;
 ALLEGRO_BITMAP* fundoBatalha = NULL;
 ALLEGRO_AUDIO_STREAM* musica = NULL;
+ALLEGRO_AUDIO_STREAM* musicaDef = NULL;
+ALLEGRO_AUDIO_STREAM* musicaVic = NULL;
 ALLEGRO_AUDIO_STREAM* musicaBat = NULL;
 ALLEGRO_AUDIO_STREAM* musica_menu = NULL;
 ALLEGRO_BITMAP* imagem = NULL;
@@ -461,7 +464,7 @@ int* sorteioNumeros() {
     }
 }
 
-int resultadoCalculo2(int num1, int num2, int num3) {
+int resultadoCalculoDois(int num1, int num2, int num3) {
     if (fase_atual == 2 || (fase_atual == 3 && vidaBoss > 10)) {
         int resultado = num1 + num2;
         resultado = resultado - num3;
@@ -506,10 +509,6 @@ void acertou() {
         vidaBoss--;
     }
     return vidaInimigo -= 1;
-}
-
-int errou() {
-    return vidaPlayer -= 1;
 }
 
 int destroyCalculadora() {
@@ -642,7 +641,7 @@ int calculadora() {
 
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
-    int menuConfirmar = 0;
+    int sair = 0;
     int* numeros;
     int num1, num2, num3;
     numeros = sorteioNumeros();
@@ -654,19 +653,19 @@ int calculadora() {
         resultado = resultadoCalculo(num1, num2);
     }
     else if (fase_atual == 2) {
-        resultado = resultadoCalculo2(num1, num2, num3);
+        resultado = resultadoCalculoDois(num1, num2, num3);
     }
     else if (fase_atual == 3 && vidaBoss > 10) {
-        resultado = resultadoCalculo2(num1, num2, num3);
+        resultado = resultadoCalculoDois(num1, num2, num3);
     }
     else if (fase_atual == 3 && vidaBoss > 5 && vidaBoss <= 10) {
         resultado = resultadoCalculo(num1, num2);
     }
     else if (fase_atual == 3 && vidaBoss <= 5) {
-        resultado = resultadoCalculo2(num1, num2, num3);
+        resultado = resultadoCalculoDois(num1, num2, num3);
     }
     
-    while (!menuConfirmar) {
+    while (!sair) {
         al_clear_to_color(al_map_rgb(45, 45, 45));
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
@@ -681,25 +680,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -710,26 +693,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
-
-                    
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -740,24 +706,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -768,24 +719,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -796,24 +732,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -824,24 +745,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -852,24 +758,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 100 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -880,24 +771,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 350 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -908,24 +784,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
 
                 if (evento.mouse.x >= 600 * (res_x_comp / (float)LARGURA_TELA) &&
@@ -936,24 +797,9 @@ int calculadora() {
                         acertou();
                     }
                     else {
-                        errou();
+                        vidaPlayer -= 1;
                     }
-
-                    destroyCalculadora();
-
-                    if (vidaPlayer > 0 && vidaInimigo > 0) {
-                        menuBatalha();
-                        return 0;
-                    }
-                    else if (vidaPlayer == 0) {
-                        al_destroy_audio_stream(musicaBat);
-                        musicaBatalha = 0;
-                        gameOver();
-                    }
-                    else {
-                        deletaInimgo(ultimoColidido);
-                        return 0;
-                    }
+                    sair = 1;
                 }
             }
         }
@@ -989,18 +835,34 @@ int calculadora() {
         al_flip_display();
     }
 
+
     destroyCalculadora();
+
+    if (vidaPlayer > 0 && vidaInimigo > 0) {
+        menuBatalha();
+        return 0;
+    }
+    else if (vidaPlayer == 0) {
+        al_destroy_audio_stream(musicaBat);
+        musicaBatalha = 0;
+        gameOver();
+    }
+    else {
+        deletaInimgo(ultimoColidido);
+        return 0;
+    }
 
     return 0;
 }
 
 int destroyGameOver() {
-    al_destroy_font(fonte);
+    al_destroy_bitmap(imagem);
     al_destroy_bitmap(voltarMenu);
+    al_destroy_audio_stream(musicaDef);
     al_destroy_event_queue(fila_eventos);
 }
 
-int gameOver(void) {
+int gameOver() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return 0;
@@ -1017,10 +879,10 @@ int gameOver(void) {
         return 0;
     }
 
-    fonte = al_load_font("arial.ttf", 64, 0);
-    if (!fonte) {
+    imagem = al_load_bitmap("Cenario/derrota.bmp");
+    if (!imagem) {
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        error_msg("Falha ao carregar fonte");
         return 0;
     }
 
@@ -1050,11 +912,37 @@ int gameOver(void) {
         return 0;
     }
 
+    if (!al_install_audio()) {
+        error_msg("Falha ao inicializar o audio");
+        return 0;
+    }
+
+    if (!al_init_acodec_addon()) {
+        error_msg("Falha ao inicializar o codec de audio");
+        return 0;
+    }
+
+    if (!al_reserve_samples(2)) {
+        error_msg("Falha ao reservar amostrar de audio");
+        return 0;
+    }
+
+    musicaDef = al_load_audio_stream("defeat.mp3", 4, 1024);
+    if (!musicaDef)
+    {
+        error_msg("Audio nao carregado");
+        return 0;
+    }
+
+    al_attach_audio_stream_to_mixer(musicaDef, al_get_default_mixer());
+    al_set_audio_stream_playmode(musicaDef, ALLEGRO_PLAYMODE_LOOP);
+
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
     int sair = 0;
 
     while (!sair) {
+        al_draw_bitmap(imagem, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
@@ -1070,13 +958,6 @@ int gameOver(void) {
                 }
             }
         }
-        
-        
-        // Preenchemos a tela com a cor ciza
-        al_clear_to_color(al_map_rgb(45, 45, 45));
-
-        // Texto tutorial
-        al_draw_textf(fonte, al_map_rgb(255, 0, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "GAME OVER");
 
         al_set_target_bitmap(voltarMenu);
 
@@ -1092,12 +973,13 @@ int gameOver(void) {
 }
 
 int destroyVictory() {
-    al_destroy_font(fonte);
+    al_destroy_bitmap(imagem);
     al_destroy_bitmap(voltarMenu);
+    al_destroy_audio_stream(musicaVic);
     al_destroy_event_queue(fila_eventos);
 }
 
-int victory(void) {
+int victory() {
     if (!al_init()) {
         error_msg("Falha ao inicializar a Allegro");
         return 0;
@@ -1114,10 +996,10 @@ int victory(void) {
         return 0;
     }
 
-    fonte = al_load_font("arial.ttf", 64, 0);
-    if (!fonte) {
+    imagem = al_load_bitmap("Cenario/vitoria.bmp");
+    if (!imagem) {
+        error_msg("Falha ao carregar o arquivo de imagem");
         al_destroy_display(janela);
-        error_msg("Falha ao carregar fonte");
         return 0;
     }
 
@@ -1147,11 +1029,43 @@ int victory(void) {
         return 0;
     }
 
+    //inicialização do add-on de audio
+    if (!al_install_audio()) {
+        error_msg("Falha ao inicializar o audio");
+        return 0;
+    }
+
+    //addon que da suporte as extensoes de audio
+    if (!al_init_acodec_addon()) {
+        error_msg("Falha ao inicializar o codec de audio");
+        return 0;
+    }
+
+    //cria o mixer (e torna ele o mixer padrao), e adciona 2 samples de audio nele
+    if (!al_reserve_samples(2)) {
+        error_msg("Falha ao reservar amostrar de audio");
+        return 0;
+    }
+
+    musicaVic = al_load_audio_stream("vitoria.mp3", 4, 1024);
+    if (!musicaVic)
+    {
+        error_msg("Audio nao carregado");
+        return 0;
+    }
+
+    //liga o stream no mixer
+    al_attach_audio_stream_to_mixer(musicaVic, al_get_default_mixer());
+
+    //define que o stream vai tocar no modo repeat
+    al_set_audio_stream_playmode(musicaVic, ALLEGRO_PLAYMODE_LOOP);
+
     al_register_event_source(fila_eventos, al_get_mouse_event_source());
 
     int sair = 0;
 
     while (!sair) {
+        al_draw_bitmap(imagem, 0, 0, 0);
         while (!al_is_event_queue_empty(fila_eventos)) {
             ALLEGRO_EVENT evento;
             al_wait_for_event(fila_eventos, &evento);
@@ -1167,12 +1081,6 @@ int victory(void) {
                 }
             }
         }
-
-        // Preenchemos a tela com a cor ciza
-        al_clear_to_color(al_map_rgb(45, 45, 45));
-
-        // Texto tutorial
-        al_draw_textf(fonte, al_map_rgb(0, 255, 0), LARGURA_TELA / 2, 250, ALLEGRO_ALIGN_CENTRE, "Voce Ganhou!!!");
 
         al_set_target_bitmap(voltarMenu);
 
@@ -2130,8 +2038,8 @@ int tutorial() {
         al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 280, ALLEGRO_ALIGN_CENTRE, "(Botao Esquedo) para selecionar a acao");
         al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 350, ALLEGRO_ALIGN_CENTRE, "OBS: Caso o jogador decida atacar,");
         al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 390, ALLEGRO_ALIGN_CENTRE, "obrigatoriamente precisara responder");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 460, ALLEGRO_ALIGN_CENTRE, "Aperte ESC durante a fase");
-        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 490, ALLEGRO_ALIGN_CENTRE, "para voltar ao MENU do Jogo");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 460, ALLEGRO_ALIGN_CENTRE, "Aperte ESC durante a fase para");
+        al_draw_textf(fonte, al_map_rgb(0, 0, 0), LARGURA_TELA / 2, 490, ALLEGRO_ALIGN_CENTRE, " voltar ao MENU do Jogo");
 
         al_set_target_bitmap(voltarMenu);
 
